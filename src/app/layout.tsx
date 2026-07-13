@@ -1,7 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
-// import Footer from "@/components/Footer";
+import Footer from "@/components/Footer";
 import { Toaster } from "react-hot-toast";
 import NextTopLoader from "nextjs-toploader";
 import { ReactNode } from "react";
@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "TrovéMart | Handmade & Artisan Marketplace",
+  title: "TrovéMart | Shop Your Needs",
   description: "Discover and shop unique handcrafted goods from independent artisans.",
 };
 
@@ -42,7 +42,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         />
         <Navbar />
         <main className="flex-grow pt-16">{children}</main>
-        {/* <Footer /> */}
+        <Footer />
       </body>
     </html>
   );
