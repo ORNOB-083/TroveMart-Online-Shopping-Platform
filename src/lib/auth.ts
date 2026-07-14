@@ -1,4 +1,3 @@
-// src/lib/auth.ts
 import { api } from './api';
 
 export interface AuthUser {
@@ -7,6 +6,7 @@ export interface AuthUser {
   email: string;
   role: 'user' | 'seller' | 'admin';
   image?: string;
+  createdAt?: string | Date;
 }
 
 interface JwtPayload extends AuthUser {
@@ -15,9 +15,15 @@ interface JwtPayload extends AuthUser {
 }
 
 const TOKEN_KEY = 'trovemart_token';
+const USER_KEY = 'trovemart_user';
 
 export function setToken(token: string) {
   localStorage.setItem(TOKEN_KEY, token);
+}
+
+export function setCurrentUser(user: AuthUser) {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(USER_KEY, JSON.stringify(user));
 }
 
 export function getToken(): string | null {
@@ -26,12 +32,28 @@ export function getToken(): string | null {
 }
 
 export function removeToken() {
+  if (typeof window === 'undefined') return;
   localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(USER_KEY);
 }
 
 export function getCurrentUser(): AuthUser | null {
+  if (typeof window === 'undefined') return null;
+
   const token = getToken();
-  if (!token) return null;
+  if (!token) {
+    localStorage.removeItem(USER_KEY);
+    return null;
+  }
+
+  const cachedUser = localStorage.getItem(USER_KEY);
+  if (cachedUser) {
+    try {
+      return JSON.parse(cachedUser) as AuthUser;
+    } catch {
+      localStorage.removeItem(USER_KEY);
+    }
+  }
 
   try {
     const payload: JwtPayload = JSON.parse(atob(token.split('.')[1]));
@@ -41,8 +63,10 @@ export function getCurrentUser(): AuthUser | null {
       return null;
     }
 
-    const { id, name, email, role, image } = payload;
-    return { id, name, email, role, image };
+    const { id, name, email, role, image, createdAt } = payload;
+    const user = { id, name, email, role, image, createdAt };
+    setCurrentUser(user);
+    return user;
   } catch {
     removeToken();
     return null;
@@ -56,24 +80,36 @@ export function isAuthenticated(): boolean {
 export async function login(email: string, password: string) {
   const { data } = await api.post('/auth/login', { email, password });
   setToken(data.token);
+  if (data.user) {
+    setCurrentUser(data.user);
+  }
   return data;
 }
 
 export async function register(name: string, email: string, password: string) {
   const { data } = await api.post('/auth/register', { name, email, password });
   setToken(data.token);
+  if (data.user) {
+    setCurrentUser(data.user);
+  }
   return data;
 }
 
 export async function loginWithGoogle(idToken: string) {
   const { data } = await api.post('/auth/google', { idToken });
   setToken(data.token);
+  if (data.user) {
+    setCurrentUser(data.user);
+  }
   return data;
 }
 
 export async function loginWithFacebookCode(code: string, redirectUri: string) {
   const { data } = await api.post('/auth/facebook', { code, redirectUri });
   setToken(data.token);
+  if (data.user) {
+    setCurrentUser(data.user);
+  }
   return data;
 }
 
