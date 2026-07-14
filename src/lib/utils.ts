@@ -1,4 +1,5 @@
-const CART_STORAGE_KEY = 'trovemart_cart_items';
+import { addToCart as addCartItem, getCartItems, isInCart as isItemInCart } from './cart';
+
 const WISHLIST_STORAGE_KEY = 'trovemart_wishlist_items';
 
 export function formatPrice(price: number): string {
@@ -48,15 +49,16 @@ export function toggleStoredItemId(key: string, itemId: string): boolean {
 }
 
 export function getCartItemIds(): string[] {
-    return getStoredItemIds(CART_STORAGE_KEY);
+    return getCartItems().map((item) => item.itemId);
 }
 
 export function getWishlistItemIds(): string[] {
     return getStoredItemIds(WISHLIST_STORAGE_KEY);
 }
 
-export function addToCart(itemId: string): boolean {
-    return addStoredItemId(CART_STORAGE_KEY, itemId);
+export async function addToCart(itemId: string, quantity = 1): Promise<boolean> {
+    await addCartItem(itemId, quantity);
+    return true;
 }
 
 export function toggleWishlistItem(itemId: string): boolean {
@@ -68,5 +70,5 @@ export function isLiked(itemId: string): boolean {
 }
 
 export function isInCart(itemId: string): boolean {
-    return hasStoredItemId(CART_STORAGE_KEY, itemId);
+    return isItemInCart(itemId);
 }

@@ -4,9 +4,11 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { Heart, Star, Eye } from 'lucide-react';
+import { Heart, Star, Eye, ShoppingCart } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { Item } from '@/lib/types';
 import { formatPrice, isLiked, toggleWishlistItem } from '@/lib/utils';
+import { addToCart } from '@/lib/cart';
 
 export default function ItemCard({ item }: { item: Item }) {
     const [liked, setLiked] = useState(() => isLiked(item._id));
@@ -45,13 +47,26 @@ export default function ItemCard({ item }: { item: Item }) {
                     />
                 </button>
 
-                <Link
-                    href={`/items/${item._id}`}
-                    className="absolute inset-x-3 bottom-3 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-white/95 dark:bg-[#1a1d24]/95 text-sm font-semibold text-gray-900 dark:text-gray-100 backdrop-blur-sm opacity-0 translate-y-3 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 shadow-lg"
-                >
-                    <Eye className="w-4 h-4" />
-                    View Details
-                </Link>
+                <div className="absolute inset-x-3 bottom-3 flex items-center gap-2 opacity-0 translate-y-3 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                    <Link
+                        href={`/items/${item._id}`}
+                        className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-white/95 dark:bg-[#1a1d24]/95 text-sm font-semibold text-gray-900 dark:text-gray-100 backdrop-blur-sm shadow-lg"
+                    >
+                        <Eye className="w-4 h-4" />
+                        View Details
+                    </Link>
+                    <button
+                        onClick={async (e) => {
+                            e.preventDefault();
+                            await addToCart(item._id, 1);
+                            toast.success('Added to cart');
+                        }}
+                        className="w-11 h-11 rounded-xl bg-[#B75D3E] text-white flex items-center justify-center shadow-lg"
+                        aria-label={`Add ${item.title} to cart`}
+                    >
+                        <ShoppingCart className="w-4 h-4" />
+                    </button>
+                </div>
             </div>
 
             <div className="p-4">

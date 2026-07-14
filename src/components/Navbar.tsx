@@ -12,6 +12,7 @@ import {
     ChevronDown,
     LayoutDashboard,
     LogOut,
+    ShoppingCart,
     User as UserIcon,
     Store,
     PlusCircle,
@@ -135,7 +136,7 @@ export default function Navbar() {
                                     className={
                                         isDark
                                             ? 'text-white'
-                                            : 'bg-gradient-to-r from-[#B75D3E] to-[#E08B5E] bg-clip-text text-transparent'
+                                            : 'bg-linear-to-r from-[#B75D3E] to-[#E08B5E] bg-clip-text text-transparent'
                                     }
                                 >
                                     Trové
@@ -143,7 +144,7 @@ export default function Navbar() {
                                 <span
                                     className={
                                         isDark
-                                            ? 'bg-gradient-to-r from-[#B75D3E] to-[#E08B5E] bg-clip-text text-transparent'
+                                            ? 'bg-linear-to-r from-[#B75D3E] to-[#E08B5E] bg-clip-text text-transparent'
                                             : 'text-gray-900'
                                     }
                                 >
@@ -218,6 +219,17 @@ export default function Navbar() {
                         </div>
 
                         <div className="hidden md:flex items-center gap-3">
+                            <Link
+                                href="/cart"
+                                aria-label="View cart"
+                                className={`p-2 rounded-full transition-all duration-200 ${isHeroTransparent
+                                    ? 'text-white/90 hover:text-white hover:bg-white/20'
+                                    : 'text-gray-600 dark:text-gray-300 hover:bg-[#E4D9C7]/60 dark:hover:bg-gray-800'
+                                    }`}
+                            >
+                                <ShoppingCart className="w-4.5 h-4.5" />
+                            </Link>
+
                             <button
                                 onClick={toggleTheme}
                                 aria-label="Toggle theme"
@@ -253,7 +265,7 @@ export default function Navbar() {
                                     </Link>
                                     <Link
                                         href="/register"
-                                        className="px-6 py-2.5 text-sm font-semibold text-white rounded-xl bg-gradient-to-r from-[#B75D3E] to-[#E08B5E] shadow-lg shadow-[#B75D3E]/30 hover:shadow-[#B75D3E]/50 hover:scale-105 active:scale-95 transition-all duration-200 ease-in-out ring-1 ring-[#B75D3E]/20 hover:ring-[#B75D3E]/40"
+                                        className="px-6 py-2.5 text-sm font-semibold text-white rounded-xl bg-linear-to-r from-[#B75D3E] to-[#E08B5E] shadow-lg shadow-[#B75D3E]/30 hover:shadow-[#B75D3E]/50 hover:scale-105 active:scale-95 transition-all duration-200 ease-in-out ring-1 ring-[#B75D3E]/20 hover:ring-[#B75D3E]/40"
                                     >
                                         Register
                                     </Link>
@@ -276,7 +288,7 @@ export default function Navbar() {
                                             className="w-7 h-7 rounded-full object-cover"
                                         />
                                         <span
-                                            className={`text-sm font-medium max-w-[80px] truncate ${isHeroTransparent ? 'text-white' : 'text-gray-700 dark:text-gray-200'
+                                            className={`text-sm font-medium max-w-20 truncate ${isHeroTransparent ? 'text-white' : 'text-gray-700 dark:text-gray-200'
                                                 }`}
                                         >
                                             {user.name?.split(' ')[0]}
@@ -302,7 +314,7 @@ export default function Navbar() {
                                                     </p>
                                                     <p className="text-xs text-gray-400 truncate">{user.email}</p>
                                                     <span
-                                                        className={`inline-block mt-1.5 px-2 py-0.5 rounded-full text-xs font-medium bg-gradient-to-r ${roleConfig.color} text-white`}
+                                                        className={`inline-block mt-1.5 px-2 py-0.5 rounded-full text-xs font-medium bg-linear-to-r ${roleConfig.color} text-white`}
                                                     >
                                                         {roleConfig.label}
                                                     </span>
@@ -350,6 +362,17 @@ export default function Navbar() {
                         </div>
 
                         <div className="md:hidden flex items-center gap-2">
+                            <Link
+                                href="/cart"
+                                aria-label="View cart"
+                                className={`p-2 rounded-full transition-colors ${isHeroTransparent
+                                    ? 'text-white hover:bg-white/20'
+                                    : 'text-gray-600 dark:text-gray-300 hover:bg-[#E4D9C7]/60 dark:hover:bg-gray-800'
+                                    }`}
+                            >
+                                <ShoppingCart className="w-4 h-4" />
+                            </Link>
+
                             <button
                                 onClick={toggleTheme}
                                 className={`p-2 rounded-full transition-colors ${isHeroTransparent
@@ -423,7 +446,7 @@ export default function Navbar() {
                                             <p className="text-xs text-gray-400 truncate">{user.email}</p>
                                         </div>
                                         <span
-                                            className={`px-2 py-0.5 rounded-full text-xs font-medium bg-gradient-to-r ${roleConfig.color} text-white`}
+                                            className={`px-2 py-0.5 rounded-full text-xs font-medium bg-linear-to-r ${roleConfig.color} text-white`}
                                         >
                                             {roleConfig.label}
                                         </span>
@@ -505,7 +528,7 @@ export default function Navbar() {
                                             <Link
                                                 href="/register"
                                                 onClick={() => setMobileOpen(false)}
-                                                className="block w-full py-3 text-center text-sm font-semibold rounded-xl bg-gradient-to-r from-[#B75D3E] to-[#E08B5E] text-white shadow-md"
+                                                className="block w-full py-3 text-center text-sm font-semibold rounded-xl bg-linear-to-r from-[#B75D3E] to-[#E08B5E] text-white shadow-md"
                                             >
                                                 Register
                                             </Link>

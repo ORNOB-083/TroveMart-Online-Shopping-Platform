@@ -4,12 +4,13 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Star, Heart, Store, ShoppingCart, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Star, Heart, Store, ShoppingCart, ChevronLeft, ChevronRight, Minus, Plus, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getItemById } from '@/lib/actions/items';
 import { getReviews, addReview } from '@/lib/actions/reviews';
 import { Item, Review } from '@/lib/types';
-import { addToCart, formatPrice, isInCart, isLiked, toggleWishlistItem } from '@/lib/utils';
+import { formatPrice, isLiked, toggleWishlistItem } from '@/lib/utils';
+import { addToCart as addCartItem, isInCart as isItemInCart } from '@/lib/cart';
 import { getCurrentUser, isAuthenticated } from '@/lib/auth';
 import ItemCard from '@/components/ItemCard';
 
@@ -23,7 +24,9 @@ export default function ItemDetailsClient({ itemId }: { itemId: string }) {
     const [activeImage, setActiveImage] = useState(0);
     const [activeTab, setActiveTab] = useState<Tab>('description');
     const [liked, setLiked] = useState(() => isLiked(itemId));
-    const [inCart, setInCart] = useState(() => isInCart(itemId));
+    const [inCart, setInCart] = useState(() => isItemInCart(itemId));
+    const [showCartModal, setShowCartModal] = useState(false);
+    const [quantity, setQuantity] = useState(1);
 
     const [reviewRating, setReviewRating] = useState(5);
     const [reviewComment, setReviewComment] = useState('');
@@ -58,9 +61,17 @@ export default function ItemDetailsClient({ itemId }: { itemId: string }) {
     };
 
     const handleAddToCart = () => {
-        const added = addToCart(itemId);
-        setInCart(isInCart(itemId));
-        toast.success(added ? 'Added to cart.' : 'Already in cart.');
+        if (!item || item.quantity === 0) return;
+        setShowCartModal(true);
+        setQuantity(1);
+    };
+
+    const confirmAddToCart = async () => {
+        if (!item) return;
+        await addCartItem(item._id, quantity);
+        setInCart(isItemInCart(item._id));
+        setShowCartModal(false);
+        toast.success(`Added ${quantity} item${quantity > 1 ? 's' : ''} to cart.`);
     };
 
     const handleSubmitReview = async () => {
@@ -371,6 +382,74 @@ export default function ItemDetailsClient({ itemId }: { itemId: string }) {
                     </div>
                 )}
             </div>
+
+            <AnimatePresence>
+                {showCartModal && item && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-60 flex items-center justify-center bg-black/50 px-4"
+                    >
+                        <motion.div
+                            initial={{ opacity: 0, y: 12, scale: 0.98 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: 8, scale: 0.98 }}
+                            className="w-full max-w-md rounded-3xl border border-[#E4D9C7] dark:border-gray-800 bg-white dark:bg-[#1a1d24] p-6 shadow-2xl"
+                        >
+                            <div className="flex items-start justify-between gap-4">
+                                <div>
+                                    <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#B75D3E]">Add to cart</p>
+                                    <h3 className="mt-1 text-lg font-semibold text-gray-900 dark:text-gray-100">{item.title}</h3>
+                                </div>
+                                <button onClick={() => setShowCartModal(false)} className="rounded-full p-2 text-gray-400 hover:bg-[#F5EFE6] dark:hover:bg-gray-800">
+                                    <X className="w-4 h-4" />
+                                </button>
+                            </div>
+
+                            <div className="mt-6 rounded-2xl border border-[#E4D9C7] dark:border-gray-800 bg-[#F5EFE6]/70 dark:bg-gray-800/60 p-4">
+                                <p className="text-sm text-gray-600 dark:text-gray-300">Choose how many you want to buy.</p>
+                                <div className="mt-4 flex items-center justify-between">
+                                    <div className="flex items-center rounded-full border border-[#E4D9C7] dark:border-gray-700 overflow-hidden bg-white dark:bg-[#1a1d24]">
+                                        <button
+                                            onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
+                                            className="p-2 text-gray-600 dark:text-gray-300"
+                                        >
+                                            <Minus className="w-4 h-4" />
+                                        </button>
+                                        <span className="min-w-12 text-center text-sm font-semibold text-gray-900 dark:text-gray-100">{quantity}</span>
+                                        <button
+                                            onClick={() => setQuantity((prev) => Math.min(item.quantity, prev + 1))}
+                                            className="p-2 text-gray-600 dark:text-gray-300"
+                                        >
+                                            <Plus className="w-4 h-4" />
+                                        </button>
+                                    </div>
+                                    <div className="text-right">
+                                        <p className="text-xs text-gray-500 dark:text-gray-400">Subtotal</p>
+                                        <p className="text-base font-semibold text-gray-900 dark:text-gray-100">{formatPrice(item.price * quantity)}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="mt-6 flex items-center gap-3">
+                                <button
+                                    onClick={() => setShowCartModal(false)}
+                                    className="flex-1 rounded-xl border border-[#E4D9C7] dark:border-gray-700 px-4 py-3 text-sm font-semibold text-gray-700 dark:text-gray-200"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={confirmAddToCart}
+                                    className="flex-1 rounded-xl bg-linear-to-r from-[#B75D3E] to-[#E08B5E] px-4 py-3 text-sm font-semibold text-white"
+                                >
+                                    Add to Cart
+                                </button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }
