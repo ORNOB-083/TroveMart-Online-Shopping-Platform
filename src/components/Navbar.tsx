@@ -57,8 +57,17 @@ export default function Navbar() {
     const isSeller = role === 'seller';
 
     useEffect(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setUser(getCurrentUser());
+        const syncUser = () => setUser(getCurrentUser());
+        syncUser();
+
+        const handleAuthChange = () => syncUser();
+        window.addEventListener('trovemart:auth-change', handleAuthChange);
+        window.addEventListener('storage', handleAuthChange);
+
+        return () => {
+            window.removeEventListener('trovemart:auth-change', handleAuthChange);
+            window.removeEventListener('storage', handleAuthChange);
+        };
     }, [pathname]);
 
     useEffect(() => {

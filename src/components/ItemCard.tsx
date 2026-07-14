@@ -6,10 +6,10 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Heart, Star, Eye } from 'lucide-react';
 import { Item } from '@/lib/types';
-import { formatPrice } from '@/lib/utils';
+import { formatPrice, isLiked, toggleWishlistItem } from '@/lib/utils';
 
 export default function ItemCard({ item }: { item: Item }) {
-    const [liked, setLiked] = useState(false);
+    const [liked, setLiked] = useState(() => isLiked(item._id));
 
     return (
         <motion.div
@@ -35,9 +35,9 @@ export default function ItemCard({ item }: { item: Item }) {
                 <button
                     onClick={(e) => {
                         e.preventDefault();
-                        setLiked((v) => !v);
+                        setLiked(toggleWishlistItem(item._id));
                     }}
-                    className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 dark:bg-black/60 backdrop-blur-sm flex items-center justify-center opacity-0 translate-y-[-6px] group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300"
+                    className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 dark:bg-black/60 backdrop-blur-sm flex items-center justify-center opacity-0 -translate-y-1.5 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300"
                 >
                     <Heart
                         className={`w-4 h-4 transition-colors ${liked ? 'fill-[#B75D3E] text-[#B75D3E]' : 'text-gray-500'
@@ -58,7 +58,7 @@ export default function ItemCard({ item }: { item: Item }) {
                 <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 line-clamp-1 mb-1">
                     {item.title}
                 </h3>
-                <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 mb-2.5 min-h-[2rem]">
+                <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 mb-2.5 min-h-8">
                     {item.description}
                 </p>
 

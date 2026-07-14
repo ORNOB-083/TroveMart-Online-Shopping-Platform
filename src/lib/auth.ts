@@ -16,14 +16,24 @@ interface JwtPayload extends AuthUser {
 
 const TOKEN_KEY = 'trovemart_token';
 const USER_KEY = 'trovemart_user';
+const AUTH_CHANGE_EVENT = 'trovemart:auth-change';
+
+function emitAuthChange() {
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new Event(AUTH_CHANGE_EVENT));
+  }
+}
 
 export function setToken(token: string) {
+  if (typeof window === 'undefined') return;
   localStorage.setItem(TOKEN_KEY, token);
+  emitAuthChange();
 }
 
 export function setCurrentUser(user: AuthUser) {
   if (typeof window === 'undefined') return;
   localStorage.setItem(USER_KEY, JSON.stringify(user));
+  emitAuthChange();
 }
 
 export function getToken(): string | null {
@@ -35,6 +45,7 @@ export function removeToken() {
   if (typeof window === 'undefined') return;
   localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(USER_KEY);
+  emitAuthChange();
 }
 
 export function getCurrentUser(): AuthUser | null {

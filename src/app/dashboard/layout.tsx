@@ -12,13 +12,25 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     const [user, setUser] = useState<AuthUser | null | undefined>(undefined); // undefined = still checking
 
     useEffect(() => {
-        const current = getCurrentUser();
-        if (!current) {
-            router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
-            return;
-        }
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setUser(current);
+        const syncUser = () => {
+            const current = getCurrentUser();
+            if (!current) {
+                router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
+                return;
+            }
+            setUser(current);
+        };
+
+        syncUser();
+
+        const handleAuthChange = () => syncUser();
+        window.addEventListener('trovemart:auth-change', handleAuthChange);
+        window.addEventListener('storage', handleAuthChange);
+
+        return () => {
+            window.removeEventListener('trovemart:auth-change', handleAuthChange);
+            window.removeEventListener('storage', handleAuthChange);
+        };
     }, [pathname, router]);
 
     if (user === undefined) {

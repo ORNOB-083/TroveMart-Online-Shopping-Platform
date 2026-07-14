@@ -9,7 +9,7 @@ import toast from 'react-hot-toast';
 import { getItemById } from '@/lib/actions/items';
 import { getReviews, addReview } from '@/lib/actions/reviews';
 import { Item, Review } from '@/lib/types';
-import { formatPrice } from '@/lib/utils';
+import { addToCart, formatPrice, isInCart, isLiked, toggleWishlistItem } from '@/lib/utils';
 import { getCurrentUser, isAuthenticated } from '@/lib/auth';
 import ItemCard from '@/components/ItemCard';
 
@@ -22,7 +22,8 @@ export default function ItemDetailsClient({ itemId }: { itemId: string }) {
     const [loading, setLoading] = useState(true);
     const [activeImage, setActiveImage] = useState(0);
     const [activeTab, setActiveTab] = useState<Tab>('description');
-    const [liked, setLiked] = useState(false);
+    const [liked, setLiked] = useState(() => isLiked(itemId));
+    const [inCart, setInCart] = useState(() => isInCart(itemId));
 
     const [reviewRating, setReviewRating] = useState(5);
     const [reviewComment, setReviewComment] = useState('');
@@ -51,6 +52,16 @@ export default function ItemDetailsClient({ itemId }: { itemId: string }) {
         }
         load();
     }, [itemId]);
+
+    const handleToggleLike = () => {
+        setLiked(toggleWishlistItem(itemId));
+    };
+
+    const handleAddToCart = () => {
+        const added = addToCart(itemId);
+        setInCart(isInCart(itemId));
+        toast.success(added ? 'Added to cart.' : 'Already in cart.');
+    };
 
     const handleSubmitReview = async () => {
         if (!isAuthenticated()) {
@@ -185,14 +196,15 @@ export default function ItemDetailsClient({ itemId }: { itemId: string }) {
 
                         <div className="flex items-center gap-3 mb-8">
                             <button
+                                onClick={handleAddToCart}
                                 disabled={item.quantity === 0}
                                 className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm font-semibold text-white bg-linear-to-r from-[#B75D3E] to-[#E08B5E] shadow-lg shadow-[#B75D3E]/25 hover:shadow-[#B75D3E]/40 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                             >
                                 <ShoppingCart className="w-4 h-4" />
-                                Add to Cart
+                                {inCart ? 'Added to Cart' : 'Add to Cart'}
                             </button>
                             <button
-                                onClick={() => setLiked((v) => !v)}
+                                onClick={handleToggleLike}
                                 className="w-12 h-12 shrink-0 rounded-xl border border-[#E4D9C7] dark:border-gray-700 flex items-center justify-center hover:bg-white dark:hover:bg-gray-800 transition-colors"
                             >
                                 <Heart className={`w-4.5 h-4.5 ${liked ? 'fill-[#B75D3E] text-[#B75D3E]' : 'text-gray-500'}`} />
