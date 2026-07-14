@@ -63,7 +63,7 @@ export default function ItemCard({ item }: { item: Item }) {
 
                 <div className="flex items-center justify-between">
                     <span className="text-base font-bold text-gray-900 dark:text-gray-100">
-                        ${item.price.toFixed(2)}
+                        ৳{item.price.toFixed(2)}
                     </span>
                     {item.reviewCount > 0 && (
                         <div className="flex items-center gap-1">

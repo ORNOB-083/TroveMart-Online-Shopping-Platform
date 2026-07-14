@@ -193,7 +193,7 @@ export default function HeroSection() {
             >
                 <div className="w-full h-16 sm:h-20 rounded-xl bg-gradient-to-br from-[#E08B5E]/70 to-[#B75D3E]/70 mb-2" />
                 <p className="text-xs font-semibold text-white">New Arrival</p>
-                <p className="text-xs text-white/90">$24.99</p>
+                <p className="text-xs text-white/90">৳24.99</p>
             </motion.div>
             <motion.div
                 animate={{ y: [0, 14, 0] }}
