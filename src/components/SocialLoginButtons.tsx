@@ -6,9 +6,28 @@ import Script from 'next/script';
 import { FaFacebook } from 'react-icons/fa';
 import { loginWithGoogle } from '@/lib/auth';
 
+interface GoogleAccountButtonOptions {
+    theme?: string;
+    size?: string;
+    width?: number | string;
+    shape?: string;
+    logo_alignment?: string;
+}
+
+interface GoogleAccountId {
+    initialize: (config: { client_id?: string; callback: (response: { credential: string }) => void }) => void;
+    renderButton: (element: HTMLElement, options: GoogleAccountButtonOptions) => void;
+}
+
+interface GoogleIdentityServices {
+    accounts: {
+        id: GoogleAccountId;
+    };
+}
+
 declare global {
     interface Window {
-        google?: any;
+        google?: GoogleIdentityServices;
     }
 }
 
