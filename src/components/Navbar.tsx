@@ -1,9 +1,10 @@
+// src/components/Navbar.tsx
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Sun,
@@ -11,22 +12,17 @@ import {
     ChevronDown,
     LayoutDashboard,
     LogOut,
-    User,
+    User as UserIcon,
     Store,
     PlusCircle,
     LayoutGrid,
     Sparkles,
     LucideIcon,
 } from 'lucide-react';
+import toast from 'react-hot-toast';
+import { getCurrentUser, logout as logoutUser, AuthUser } from '@/lib/auth';
 
 type Role = 'user' | 'seller' | 'admin';
-
-interface User {
-    name: string;
-    email: string;
-    image?: string;
-    role: Role;
-}
 
 interface RoleConfig {
     label: string;
@@ -34,29 +30,13 @@ interface RoleConfig {
     icon: LucideIcon;
 }
 
-type DashboardLinks = Record<Role, string>;
-
-const MOCK_USER: User | null = null;
-
 const ROLE_CONFIG: Record<Role, RoleConfig> = {
-    user: {
-        label: 'Buyer',
-        color: 'from-[#B75D3E] to-[#E08B5E]',
-        icon: User,
-    },
-    seller: {
-        label: 'Seller',
-        color: 'from-emerald-500 to-teal-500',
-        icon: Store,
-    },
-    admin: {
-        label: 'Admin',
-        color: 'from-rose-500 to-red-500',
-        icon: Sparkles,
-    },
+    user: { label: 'Buyer', color: 'from-[#B75D3E] to-[#E08B5E]', icon: UserIcon },
+    seller: { label: 'Seller', color: 'from-emerald-500 to-teal-500', icon: Store },
+    admin: { label: 'Admin', color: 'from-rose-500 to-red-500', icon: Sparkles },
 };
 
-const DASHBOARD_LINKS: DashboardLinks = {
+const DASHBOARD_LINKS: Record<Role, string> = {
     user: '/dashboard/user',
     seller: '/dashboard/seller',
     admin: '/dashboard/admin',
@@ -64,15 +44,22 @@ const DASHBOARD_LINKS: DashboardLinks = {
 
 export default function Navbar() {
     const pathname = usePathname();
+    const router = useRouter();
+
     const [isDark, setIsDark] = useState<boolean>(false);
     const [mobileOpen, setMobileOpen] = useState<boolean>(false);
     const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
     const [scrolled, setScrolled] = useState<boolean>(false);
+    const [user, setUser] = useState<AuthUser | null>(null);
 
-    const user: User | null = MOCK_USER;
     const role: Role = user?.role || 'user';
     const roleConfig = ROLE_CONFIG[role];
     const isSeller = role === 'seller' || role === 'admin';
+
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setUser(getCurrentUser());
+    }, [pathname]);
 
     useEffect(() => {
         const onScroll = () => setScrolled(window.scrollY > 20);
@@ -81,12 +68,8 @@ export default function Navbar() {
     }, []);
 
     useEffect(() => {
-        const saved = localStorage.getItem('trovemart-theme');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const initialDark = saved === 'dark' || (!saved && prefersDark);
         // eslint-disable-next-line react-hooks/set-state-in-effect
-        setIsDark(initialDark);
-        document.documentElement.classList.toggle('dark', initialDark);
+        setIsDark(document.documentElement.classList.contains('dark'));
     }, []);
 
     const toggleTheme = useCallback(() => {
@@ -95,6 +78,15 @@ export default function Navbar() {
         document.documentElement.classList.toggle('dark', next);
         localStorage.setItem('trovemart-theme', next ? 'dark' : 'light');
     }, [isDark]);
+
+    const handleLogout = () => {
+        logoutUser();
+        setUser(null);
+        setDropdownOpen(false);
+        setMobileOpen(false);
+        toast.success('Signed out successfully.');
+        router.push('/');
+    };
 
     const isActiveLink = (href: string): boolean => {
         if (href === '/') return pathname === '/';
@@ -234,11 +226,7 @@ export default function Navbar() {
                                         transition={{ duration: 0.2 }}
                                         className="block"
                                     >
-                                        {isDark ? (
-                                            <Sun className="w-4.5 h-4.5" />
-                                        ) : (
-                                            <Moon className="w-4.5 h-4.5" />
-                                        )}
+                                        {isDark ? <Sun className="w-4.5 h-4.5" /> : <Moon className="w-4.5 h-4.5" />}
                                     </motion.span>
                                 </AnimatePresence>
                             </button>
@@ -273,24 +261,20 @@ export default function Navbar() {
                                         <img
                                             src={
                                                 user.image ||
-                                                `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                                                    user.name
-                                                )}&background=B75D3E&color=fff&size=32`
+                                                `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=B75D3E&color=fff&size=32`
                                             }
                                             alt={user.name}
                                             className="w-7 h-7 rounded-full object-cover"
                                         />
                                         <span
-                                            className={`text-sm font-medium max-w-[80px] truncate ${isHeroTransparent
-                                                ? 'text-white'
-                                                : 'text-gray-700 dark:text-gray-200'
+                                            className={`text-sm font-medium max-w-[80px] truncate ${isHeroTransparent ? 'text-white' : 'text-gray-700 dark:text-gray-200'
                                                 }`}
                                         >
                                             {user.name?.split(' ')[0]}
                                         </span>
                                         <ChevronDown
-                                            className={`w-3.5 h-3.5 transition-transform ${dropdownOpen ? 'rotate-180' : ''
-                                                } ${isHeroTransparent ? 'text-white/70' : 'text-gray-400'}`}
+                                            className={`w-3.5 h-3.5 transition-transform ${dropdownOpen ? 'rotate-180' : ''} ${isHeroTransparent ? 'text-white/70' : 'text-gray-400'
+                                                }`}
                                         />
                                     </button>
 
@@ -328,7 +312,7 @@ export default function Navbar() {
                                                         onClick={() => setDropdownOpen(false)}
                                                         className="flex items-center gap-2.5 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-[#F5EFE6] dark:hover:bg-gray-800 hover:text-[#B75D3E] dark:hover:text-[#E08B5E] rounded-xl transition-all"
                                                     >
-                                                        <User className="w-4 h-4" />
+                                                        <UserIcon className="w-4 h-4" />
                                                         My Profile
                                                     </Link>
                                                     {role === 'user' && (
@@ -342,10 +326,7 @@ export default function Navbar() {
                                                         </Link>
                                                     )}
                                                     <button
-                                                        onClick={() => {
-                                                            setDropdownOpen(false);
-                                                            // TODO: wire real signOut
-                                                        }}
+                                                        onClick={handleLogout}
                                                         className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-all"
                                                     >
                                                         <LogOut className="w-4 h-4" />
@@ -374,9 +355,7 @@ export default function Navbar() {
                                 <img
                                     src={
                                         user.image ||
-                                        `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                                            user.name
-                                        )}&background=B75D3E&color=fff&size=32`
+                                        `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=B75D3E&color=fff&size=32`
                                     }
                                     alt={user.name}
                                     className="w-8 h-8 rounded-full object-cover border-2 border-[#B75D3E]/30"
@@ -396,8 +375,7 @@ export default function Navbar() {
                                             }`}
                                     />
                                     <span
-                                        className={`w-5 h-0.5 bg-current transition-all duration-300 ${mobileOpen ? 'opacity-0' : ''
-                                            }`}
+                                        className={`w-5 h-0.5 bg-current transition-all duration-300 ${mobileOpen ? 'opacity-0' : ''}`}
                                     />
                                     <span
                                         className={`w-5 h-0.5 bg-current transition-all duration-300 ${mobileOpen ? '-rotate-45 -translate-y-2' : ''
@@ -424,9 +402,7 @@ export default function Navbar() {
                                         <img
                                             src={
                                                 user.image ||
-                                                `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                                                    user.name
-                                                )}&background=B75D3E&color=fff&size=32`
+                                                `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=B75D3E&color=fff&size=32`
                                             }
                                             alt={user.name}
                                             className="w-9 h-9 rounded-full object-cover"
@@ -527,10 +503,7 @@ export default function Navbar() {
                                         </>
                                     ) : (
                                         <button
-                                            onClick={() => {
-                                                setMobileOpen(false);
-                                                // TODO: wire real signOut
-                                            }}
+                                            onClick={handleLogout}
                                             className="w-full py-3 text-center text-sm font-medium rounded-xl bg-red-50 dark:bg-red-900/20 text-red-500"
                                         >
                                             Sign Out
@@ -543,9 +516,7 @@ export default function Navbar() {
                 </AnimatePresence>
             </nav>
 
-            {dropdownOpen && (
-                <div className="fixed inset-0 z-40" onClick={() => setDropdownOpen(false)} />
-            )}
+            {dropdownOpen && <div className="fixed inset-0 z-40" onClick={() => setDropdownOpen(false)} />}
         </>
     );
 }

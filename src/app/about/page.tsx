@@ -1,20 +1,31 @@
 'use client';
 
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import { Users, Award, Heart, Globe, ShoppingBag, ArrowRight } from 'lucide-react';
 
-const containerVariants = {
-    hidden: { opacity: 0 },
+const containerVariants: Variants = {
+    hidden: { y: 30, opacity: 0 },
     visible: {
+        y: 0,
         opacity: 1,
-        transition: { staggerChildren: 0.1, delayChildren: 0.2 },
+        transition: {
+            duration: 0.6,
+            ease: "easeOut" as const,
+        },
     },
 };
 
-const itemVariants = {
-    hidden: { y: 30, opacity: 0 },
-    visible: { y: 0, opacity: 1, transition: { duration: 0.6, ease: 'easeOut' } },
+const itemVariants: Variants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+        y: 0,
+        opacity: 1,
+        transition: {
+            duration: 0.4,
+            ease: "easeOut" as const,
+        },
+    },
 };
 
 const values = [
