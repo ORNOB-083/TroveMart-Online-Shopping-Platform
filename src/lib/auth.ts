@@ -29,8 +29,6 @@ export function removeToken() {
   localStorage.removeItem(TOKEN_KEY);
 }
 
-// Decodes the JWT payload client-side for display purposes only.
-// This is NOT a security check — the backend always re-verifies the signature.
 export function getCurrentUser(): AuthUser | null {
   const token = getToken();
   if (!token) return null;
@@ -63,6 +61,18 @@ export async function login(email: string, password: string) {
 
 export async function register(name: string, email: string, password: string) {
   const { data } = await api.post('/auth/register', { name, email, password });
+  setToken(data.token);
+  return data;
+}
+
+export async function loginWithGoogle(idToken: string) {
+  const { data } = await api.post('/auth/google', { idToken });
+  setToken(data.token);
+  return data;
+}
+
+export async function loginWithFacebookCode(code: string, redirectUri: string) {
+  const { data } = await api.post('/auth/facebook', { code, redirectUri });
   setToken(data.token);
   return data;
 }

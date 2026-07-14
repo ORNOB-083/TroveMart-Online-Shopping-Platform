@@ -1,4 +1,3 @@
-// src/app/(auth)/register/RegisterForm.tsx
 'use client';
 
 import { useState } from 'react';
@@ -94,7 +93,6 @@ export default function RegisterForm() {
     return (
         <div className="min-h-screen flex items-center justify-center px-4 py-20 bg-[#F5EFE6] dark:bg-[#0f1117] relative overflow-hidden transition-colors duration-300">
 
-            {/* Ambient background */}
             <div className="pointer-events-none absolute inset-0">
                 <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-[#B75D3E]/10 dark:bg-[#B75D3E]/15 blur-[110px]" />
                 <div className="absolute bottom-0 right-0 w-[26rem] h-[26rem] rounded-full bg-[#E08B5E]/15 dark:bg-[#E08B5E]/10 blur-[120px]" />
@@ -106,7 +104,6 @@ export default function RegisterForm() {
                 transition={{ duration: 0.5, ease: 'easeOut' }}
                 className="relative z-10 w-full max-w-4xl bg-white dark:bg-[#1a1d24] border border-[#E4D9C7] dark:border-gray-800 rounded-3xl shadow-2xl shadow-[#B75D3E]/5 overflow-hidden flex flex-col md:flex-row"
             >
-                {/* Left: form */}
                 <div className="w-full md:w-3/5 p-8 sm:p-10">
                     <div className="mb-7">
                         <Link href="/" className="text-xl font-bold tracking-tight">
@@ -260,7 +257,6 @@ export default function RegisterForm() {
                     </p>
                 </div>
 
-                {/* Right: value props panel */}
                 <div className="hidden md:flex md:w-2/5 bg-gradient-to-br from-[#B75D3E] to-[#8F4530] p-10 flex-col justify-center relative overflow-hidden">
                     <div
                         className="pointer-events-none absolute inset-0 opacity-10"
