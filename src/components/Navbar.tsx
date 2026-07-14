@@ -54,7 +54,7 @@ export default function Navbar() {
 
     const role: Role = user?.role || 'user';
     const roleConfig = ROLE_CONFIG[role];
-    const isSeller = role === 'seller' || role === 'admin';
+    const isSeller = role === 'seller';
 
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
