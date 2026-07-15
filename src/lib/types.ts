@@ -1,4 +1,5 @@
 export interface Item {
+    status: "pending" | "approved" | "rejected";
     _id: string;
     title: string;
     description: string;
