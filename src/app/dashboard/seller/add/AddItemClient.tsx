@@ -82,7 +82,7 @@ export default function AddItemClient() {
                 specs: specsObject,
             });
             toast.success('Item submitted for admin approval!');
-            router.push('/items/manage');
+            router.push('dashboard/seller/items');
         } catch (err: any) {
             toast.error(err?.response?.data?.message || 'Failed to add item.');
         } finally {
