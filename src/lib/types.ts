@@ -43,3 +43,12 @@ export interface AdminUser {
     banned: boolean;
     createdAt: string;
 }
+
+export interface MyReview extends Review {
+    item: {
+        _id: string;
+        title: string;
+        images: string[];
+        price: number;
+    } | null;
+}
