@@ -4,6 +4,7 @@ import type { NextConfig } from 'next';
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
+      { protocol: 'https', hostname: '**', },
       // Unsplash
       {
         protocol: 'https', hostname: 'images.unsplash.com', pathname: '/**',
@@ -37,6 +38,9 @@ const nextConfig: NextConfig = {
 
       // Placeholder services
       { protocol: 'https', hostname: 'via.placeholder.com', pathname: '/**' },
+      {
+        protocol: 'https', hostname: 'ui-avatars.com', pathname: '/**',
+      },
     ],
   },
 };

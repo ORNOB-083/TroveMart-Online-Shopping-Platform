@@ -43,7 +43,7 @@ const NAV_LINKS: Record<Role, NavItem[]> = {
         { label: 'My Orders', href: '/dashboard/user/orders', icon: Package },
         { label: 'My Wishlist & Followed Stores', href: '/dashboard/user/wishlist', icon: Heart },
         { label: 'My Reviews', href: '/dashboard/user/reviews', icon: Star },
-        { label: 'My Returns & Cancellations', href: '/dashboard/user/returns', icon: RotateCcw },
+        /* { label: 'My Returns & Cancellations', href: '/dashboard/user/returns', icon: RotateCcw }, */
     ],
     seller: [
         { label: 'Overview', href: '/dashboard/seller', icon: LayoutDashboard },
