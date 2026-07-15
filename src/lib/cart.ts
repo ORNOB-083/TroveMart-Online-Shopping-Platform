@@ -37,10 +37,29 @@ function saveCartItems(items: CartItem[]) {
 }
 
 export function getCartCount(): number {
-    return getCartItems().reduce((sum, item) => sum + item.quantity, 0);
+    const items = getCartItems();
+    return items.reduce((sum, item) => {
+        const quantity = typeof item.quantity === 'number' && !isNaN(item.quantity) ? item.quantity : 0;
+        return sum + quantity;
+    }, 0);
 }
 
 export async function addToCart(itemId: string, quantity = 1): Promise<CartItem[]> {
+    const currentUser = getCurrentUser();
+    
+    if (currentUser) {
+        try {
+            await api.post('/cart', { itemId, quantity });
+            // After successful server update, sync with server
+            await hydrateCartFromServer();
+            return getCartItems();
+        } catch (error) {
+            console.error('Server cart update failed, using local storage:', error);
+            // Fall back to local storage if server fails
+        }
+    }
+    
+    // Local storage fallback
     const nextItems = [...getCartItems()];
     const existing = nextItems.find((item) => item.itemId === itemId);
 
@@ -51,51 +70,51 @@ export async function addToCart(itemId: string, quantity = 1): Promise<CartItem[
     }
 
     saveCartItems(nextItems);
-
-    const currentUser = getCurrentUser();
-    if (currentUser) {
-        try {
-            await api.post('/cart', { itemId, quantity });
-        } catch {
-            // fall back to local storage if the server is unavailable
-        }
-    }
-
     return nextItems;
 }
 
 export async function updateCartQuantity(itemId: string, quantity: number): Promise<CartItem[]> {
+    const currentUser = getCurrentUser();
+    
+    if (currentUser) {
+        try {
+            await api.put(`/cart/${itemId}`, { quantity });
+            // After successful server update, sync with server
+            await hydrateCartFromServer();
+            return getCartItems();
+        } catch (error) {
+            console.error('Server cart update failed, using local storage:', error);
+            // Fall back to local storage if server fails
+        }
+    }
+    
+    // Local storage fallback
     const nextItems = getCartItems()
         .filter((item) => item.itemId !== itemId)
         .concat(quantity > 0 ? [{ itemId, quantity }] : []);
 
     saveCartItems(nextItems);
-
-    const currentUser = getCurrentUser();
-    if (currentUser) {
-        try {
-            await api.post('/cart', { itemId, quantity });
-        } catch {
-            // ignore sync failure and keep the local cart state
-        }
-    }
-
     return nextItems;
 }
 
 export async function removeFromCart(itemId: string): Promise<CartItem[]> {
-    const nextItems = getCartItems().filter((item) => item.itemId !== itemId);
-    saveCartItems(nextItems);
-
     const currentUser = getCurrentUser();
+    
     if (currentUser) {
         try {
             await api.delete(`/cart/${itemId}`);
-        } catch {
-            // ignore sync failure and keep the local cart state
+            // After successful server update, sync with server
+            await hydrateCartFromServer();
+            return getCartItems();
+        } catch (error) {
+            console.error('Server cart update failed, using local storage:', error);
+            // Fall back to local storage if server fails
         }
     }
-
+    
+    // Local storage fallback
+    const nextItems = getCartItems().filter((item) => item.itemId !== itemId);
+    saveCartItems(nextItems);
     return nextItems;
 }
 
@@ -105,10 +124,15 @@ export async function hydrateCartFromServer(): Promise<CartItem[]> {
 
     try {
         const { data } = await api.get('/cart');
-        const items = (data.items || []) as CartItem[];
+        // Convert server format to local format
+        const items = (data.items || []).map((serverItem: any) => ({
+            itemId: serverItem.itemId,
+            quantity: serverItem.quantity
+        }));
         saveCartItems(items);
         return items;
-    } catch {
+    } catch (error) {
+        console.error('Failed to hydrate cart from server:', error);
         return getCartItems();
     }
 }

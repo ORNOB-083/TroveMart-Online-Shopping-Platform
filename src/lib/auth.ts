@@ -94,6 +94,9 @@ export async function login(email: string, password: string) {
   if (data.user) {
     setCurrentUser(data.user);
   }
+  // Sync cart with server after login
+  const { hydrateCartFromServer } = await import('./cart');
+  await hydrateCartFromServer();
   return data;
 }
 
@@ -103,6 +106,9 @@ export async function register(name: string, email: string, password: string) {
   if (data.user) {
     setCurrentUser(data.user);
   }
+  // Sync cart with server after registration
+  const { hydrateCartFromServer } = await import('./cart');
+  await hydrateCartFromServer();
   return data;
 }
 
@@ -112,6 +118,9 @@ export async function loginWithGoogle(idToken: string) {
   if (data.user) {
     setCurrentUser(data.user);
   }
+  // Sync cart with server after login
+  const { hydrateCartFromServer } = await import('./cart');
+  await hydrateCartFromServer();
   return data;
 }
 
@@ -121,6 +130,9 @@ export async function loginWithFacebookCode(code: string, redirectUri: string) {
   if (data.user) {
     setCurrentUser(data.user);
   }
+  // Sync cart with server after login
+  const { hydrateCartFromServer } = await import('./cart');
+  await hydrateCartFromServer();
   return data;
 }
 

@@ -62,7 +62,14 @@ export async function addToCart(itemId: string, quantity = 1): Promise<boolean> 
 }
 
 export function toggleWishlistItem(itemId: string): boolean {
-    return toggleStoredItemId(WISHLIST_STORAGE_KEY, itemId);
+    const result = toggleStoredItemId(WISHLIST_STORAGE_KEY, itemId);
+    
+    // Dispatch event for dashboard updates
+    if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event('trovemart:wishlist-change'));
+    }
+    
+    return result;
 }
 
 export function isLiked(itemId: string): boolean {

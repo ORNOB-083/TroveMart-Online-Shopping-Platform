@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, Store } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { getMyWishlist, toggleWishlist } from '@/lib/actions/wishlist';
+import { getWishlistItemIds, toggleWishlistItem } from '@/lib/utils';
+import { getItemById } from '@/lib/actions/items';
 import { Item } from '@/lib/types';
 import ItemCard from '@/components/ItemCard';
 
@@ -14,21 +15,58 @@ export default function WishlistClient() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        getMyWishlist()
-            .then(setItems)
-            .catch(() => toast.error('Failed to load your wishlist.'))
-            .finally(() => setLoading(false));
+        loadWishlist();
+
+        // Listen for wishlist changes
+        const handleWishlistChange = () => {
+            loadWishlist();
+        };
+
+        window.addEventListener('trovemart:wishlist-change', handleWishlistChange);
+        window.addEventListener('storage', handleWishlistChange);
+
+        return () => {
+            window.removeEventListener('trovemart:wishlist-change', handleWishlistChange);
+            window.removeEventListener('storage', handleWishlistChange);
+        };
     }, []);
 
-    const handleRemove = async (itemId: string) => {
+    const loadWishlist = async () => {
+        setLoading(true);
+        try {
+            const wishlistIds = getWishlistItemIds();
+            
+            if (!wishlistIds.length) {
+                setItems([]);
+                setLoading(false);
+                return;
+            }
+
+            const resolved: Item[] = [];
+
+            for (const itemId of wishlistIds) {
+                try {
+                    const { item } = await getItemById(itemId);
+                    resolved.push(item);
+                } catch (err) {
+                    console.warn(`Skipping wishlist item ${itemId}:`, err);
+                }
+            }
+
+            setItems(resolved);
+        } catch (err) {
+            console.error(err);
+            toast.error('Failed to load your wishlist.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleRemove = (itemId: string) => {
         // Optimistic update
         setItems((prev) => prev.filter((i) => i._id !== itemId));
-        try {
-            await toggleWishlist(itemId);
-            toast.success('Removed from wishlist.');
-        } catch {
-            toast.error('Failed to remove item. Refresh to try again.');
-        }
+        toggleWishlistItem(itemId);
+        toast.success('Removed from wishlist.');
     };
 
     if (loading) {

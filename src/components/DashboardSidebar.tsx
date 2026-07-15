@@ -24,6 +24,7 @@ import {
     Store,
     Menu,
     X,
+    ShoppingCart,
     LucideIcon,
 } from 'lucide-react';
 import { logout, AuthUser } from '@/lib/auth';
@@ -39,9 +40,10 @@ interface NavItem {
 const NAV_LINKS: Record<Role, NavItem[]> = {
     user: [
         { label: 'Overview', href: '/dashboard/user', icon: LayoutDashboard },
+        { label: 'My Cart', href: '/dashboard/user/cart', icon: ShoppingCart },
         { label: 'Manage My Profile', href: '/dashboard/user/profile', icon: User },
         // { label: 'My Orders', href: '/dashboard/user/orders', icon: Package },
-        // { label: 'My Wishlist & Followed Stores', href: '/dashboard/user/wishlist', icon: Heart },
+        { label: 'My Wishlist', href: '/dashboard/user/wishlist', icon: Heart },
         { label: 'My Reviews', href: '/dashboard/user/reviews', icon: Star },
         // { label: 'My Returns & Cancellations', href: '/dashboard/user/returns', icon: RotateCcw },
     ],
