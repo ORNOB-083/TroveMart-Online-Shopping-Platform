@@ -38,9 +38,13 @@ const nextConfig: NextConfig = {
 
       // Placeholder services
       { protocol: 'https', hostname: 'via.placeholder.com', pathname: '/**' },
-      {
-        protocol: 'https', hostname: 'ui-avatars.com', pathname: '/**',
-      },
+      { protocol: 'https', hostname: 'ui-avatars.com', pathname: '/**' },
+      { protocol: 'https', hostname: 'ui-avatars.com', pathname: '/**' },
+      { protocol: 'https', hostname: 'avatars.githubusercontent.com', pathname: '/**' },
+      { protocol: 'https', hostname: 'lh3.googleusercontent.com', pathname: '/**' },
+      { protocol: 'https', hostname: 'gravatar.com', pathname: '/**' },
+      { protocol: 'https', hostname: 'avatar.vercel.sh', pathname: '/**' },
+      { protocol: 'https', hostname: 'cloudflare-ipfs.com', pathname: '/**' },
     ],
   },
 };
