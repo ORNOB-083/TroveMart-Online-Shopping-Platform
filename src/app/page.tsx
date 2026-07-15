@@ -5,6 +5,7 @@ import TestimonialsSection from '@/components/TestimonialsSection';
 import BecomeSellerSection from '@/components/BecomeSellerSection';
 import { getItems } from '@/lib/actions/items';
 import WhyChooseUsSection from '@/components/WhyChooseUsSection';
+import FaqSection from '@/components/FaqSection';
 
 export default async function Home() {
   const { items } = await getItems({
@@ -19,6 +20,7 @@ export default async function Home() {
       <CategorySection />
       <WhyChooseUsSection />
       <TestimonialsSection />
+      <FaqSection />
       <BecomeSellerSection />
     </main>
   );
