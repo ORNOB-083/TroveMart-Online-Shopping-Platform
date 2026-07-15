@@ -4,6 +4,7 @@ import FlashSaleSection from '@/components/FlashSaleSection';
 import TestimonialsSection from '@/components/TestimonialsSection';
 import BecomeSellerSection from '@/components/BecomeSellerSection';
 import { getItems } from '@/lib/actions/items';
+import WhyChooseUsSection from '@/components/WhyChooseUsSection';
 
 export default async function Home() {
   const { items } = await getItems({
@@ -16,6 +17,7 @@ export default async function Home() {
       <HeroSection />
       <FlashSaleSection items={items} />
       <CategorySection />
+      <WhyChooseUsSection />
       <TestimonialsSection />
       <BecomeSellerSection />
     </main>
