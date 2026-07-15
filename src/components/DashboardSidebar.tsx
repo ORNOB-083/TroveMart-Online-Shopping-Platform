@@ -40,8 +40,8 @@ const NAV_LINKS: Record<Role, NavItem[]> = {
     user: [
         { label: 'Overview', href: '/dashboard/user', icon: LayoutDashboard },
         { label: 'Manage My Profile', href: '/dashboard/user/profile', icon: User },
-        { label: 'My Orders', href: '/dashboard/user/orders', icon: Package },
-        { label: 'My Wishlist & Followed Stores', href: '/dashboard/user/wishlist', icon: Heart },
+        // { label: 'My Orders', href: '/dashboard/user/orders', icon: Package },
+        // { label: 'My Wishlist & Followed Stores', href: '/dashboard/user/wishlist', icon: Heart },
         { label: 'My Reviews', href: '/dashboard/user/reviews', icon: Star },
         // { label: 'My Returns & Cancellations', href: '/dashboard/user/returns', icon: RotateCcw },
     ],

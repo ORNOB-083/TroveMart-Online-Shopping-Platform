@@ -10,8 +10,38 @@ import { Item } from '@/lib/types';
 import { formatPrice, isLiked, toggleWishlistItem } from '@/lib/utils';
 import { addToCart } from '@/lib/cart';
 
-export default function ItemCard({ item }: { item: Item }) {
+interface ItemCardProps {
+    item: Item;
+    onWishlistChange?: () => void;
+}
+
+export default function ItemCard({ item, onWishlistChange }: ItemCardProps) {
     const [liked, setLiked] = useState(() => isLiked(item._id));
+
+    const handleToggleWishlist = async (e: React.MouseEvent) => {
+        e.preventDefault(); 
+        try {
+            const newLiked = await toggleWishlistItem(item._id);
+            setLiked(newLiked);
+
+            // Let the parent know the wishlist changed so it can update its UI
+            if (onWishlistChange) {
+                onWishlistChange();
+            }
+        } catch {
+            toast.error('Failed to update wishlist.');
+        }
+    };
+
+    const handleAddToCart = async (e: React.MouseEvent) => {
+        e.preventDefault(); 
+        try {
+            await addToCart(item._id, 1);
+            toast.success('Added to cart');
+        } catch {
+            toast.error('Failed to add to cart.');
+        }
+    };
 
     return (
         <motion.div
@@ -35,11 +65,8 @@ export default function ItemCard({ item }: { item: Item }) {
                 </span>
 
                 <button
-                    onClick={(e) => {
-                        e.preventDefault();
-                        setLiked(toggleWishlistItem(item._id));
-                    }}
-                    className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 dark:bg-black/60 backdrop-blur-sm flex items-center justify-center opacity-0 -translate-y-1.5 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300"
+                    onClick={handleToggleWishlist}
+                    className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 dark:bg-black/60 backdrop-blur-sm flex items-center justify-center opacity-100 translate-y-0 lg:opacity-0 lg:-translate-y-1.5 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300"
                 >
                     <Heart
                         className={`w-4 h-4 transition-colors ${liked ? 'fill-[#B75D3E] text-[#B75D3E]' : 'text-gray-500'
@@ -47,7 +74,7 @@ export default function ItemCard({ item }: { item: Item }) {
                     />
                 </button>
 
-                <div className="absolute inset-x-3 bottom-3 flex items-center gap-2 opacity-0 translate-y-3 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                <div className="absolute inset-x-3 bottom-3 flex items-center gap-2 opacity-100 translate-y-0 lg:opacity-0 lg:translate-y-3 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
                     <Link
                         href={`/items/${item._id}`}
                         className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-white/95 dark:bg-[#1a1d24]/95 text-sm font-semibold text-gray-900 dark:text-gray-100 backdrop-blur-sm shadow-lg"
@@ -56,11 +83,7 @@ export default function ItemCard({ item }: { item: Item }) {
                         View Details
                     </Link>
                     <button
-                        onClick={async (e) => {
-                            e.preventDefault();
-                            await addToCart(item._id, 1);
-                            toast.success('Added to cart');
-                        }}
+                        onClick={handleAddToCart}
                         className="w-11 h-11 rounded-xl bg-[#B75D3E] text-white flex items-center justify-center shadow-lg"
                         aria-label={`Add ${item.title} to cart`}
                     >
