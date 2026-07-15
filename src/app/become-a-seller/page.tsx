@@ -1,5 +1,5 @@
-import BecomeSellerSection from "@/components/BecomeSellerSection";
+import BecomeSellerClient from "./BecomeSellerClient";
 
 export default function BecomeSellerPage() {
-    return <BecomeSellerSection />;
+    return <BecomeSellerClient />
 }

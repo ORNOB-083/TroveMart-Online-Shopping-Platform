@@ -95,7 +95,6 @@ export default function BecomeSellerClient() {
             <div className="max-w-xl mx-auto">
                 <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
 
-                    {/* Already a seller/admin */}
                     {isSeller && (
                         <div className="bg-white dark:bg-[#1a1d24] border border-[#E4D9C7] dark:border-gray-800 rounded-2xl p-8 text-center">
                             <CheckCircle2 className="w-10 h-10 text-emerald-500 mx-auto mb-3" />
@@ -114,7 +113,6 @@ export default function BecomeSellerClient() {
                         </div>
                     )}
 
-                    {/* Pending application */}
                     {!isSeller && application?.status === 'pending' && (
                         <div className="bg-white dark:bg-[#1a1d24] border border-[#E4D9C7] dark:border-gray-800 rounded-2xl p-8 text-center">
                             <Clock className="w-10 h-10 text-amber-500 mx-auto mb-3" />
@@ -128,7 +126,6 @@ export default function BecomeSellerClient() {
                         </div>
                     )}
 
-                    {/* Approved but token not yet refreshed */}
                     {!isSeller && application?.status === 'approved' && (
                         <div className="bg-white dark:bg-[#1a1d24] border border-[#E4D9C7] dark:border-gray-800 rounded-2xl p-8 text-center">
                             <CheckCircle2 className="w-10 h-10 text-emerald-500 mx-auto mb-3" />
@@ -159,7 +156,6 @@ export default function BecomeSellerClient() {
                         </div>
                     )}
 
-                    {/* Rejected — allow reapply */}
                     {!isSeller && application?.status === 'rejected' && (
                         <div className="bg-white dark:bg-[#1a1d24] border border-[#E4D9C7] dark:border-gray-800 rounded-2xl p-8 text-center mb-6">
                             <XCircle className="w-10 h-10 text-red-500 mx-auto mb-3" />
@@ -172,7 +168,6 @@ export default function BecomeSellerClient() {
                         </div>
                     )}
 
-                    {/* Form — shown if no application, or previous one was rejected */}
                     {!isSeller && (!application || application.status === 'rejected') && (
                         <div className="bg-white dark:bg-[#1a1d24] border border-[#E4D9C7] dark:border-gray-800 rounded-2xl p-8">
                             <div className="text-center mb-6">
