@@ -19,7 +19,7 @@ export default function ItemCard({ item, onWishlistChange }: ItemCardProps) {
     const [liked, setLiked] = useState(() => isLiked(item._id));
 
     const handleToggleWishlist = async (e: React.MouseEvent) => {
-        e.preventDefault(); 
+        e.preventDefault();
         try {
             const newLiked = await toggleWishlistItem(item._id);
             setLiked(newLiked);
@@ -34,7 +34,7 @@ export default function ItemCard({ item, onWishlistChange }: ItemCardProps) {
     };
 
     const handleAddToCart = async (e: React.MouseEvent) => {
-        e.preventDefault(); 
+        e.preventDefault();
         try {
             await addToCart(item._id, 1);
             toast.success('Added to cart');

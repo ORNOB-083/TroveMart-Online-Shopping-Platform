@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { ArrowRight, ChevronDown, ShoppingBag, Star, Truck, Clock, Package } from 'lucide-react';
 
@@ -189,18 +190,33 @@ export default function HeroSection() {
             <motion.div
                 animate={{ y: [0, -12, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-                className="absolute top-4 right-4 sm:top-24 sm:right-16 w-32 sm:w-40 rounded-2xl bg-white/30 backdrop-blur-xl border border-white/40 p-2.5 sm:p-3 z-20 shadow-2xl"
+                className="hidden sm:block absolute top-4 right-4 sm:top-24 sm:right-16 w-32 sm:w-40 rounded-2xl bg-white/30 backdrop-blur-xl border border-white/40 p-2.5 sm:p-3 z-20 shadow-2xl"
             >
-                <div className="w-full h-16 sm:h-20 rounded-xl bg-gradient-to-br from-[#E08B5E]/70 to-[#B75D3E]/70 mb-2" />
+                <div className="relative w-full h-16 sm:h-20 rounded-xl overflow-hidden mb-2">
+                    <Image
+                        src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&h=300&fit=crop"
+                        alt="New Arrival"
+                        fill
+                        className="object-cover"
+                    />
+                </div>
                 <p className="text-xs font-semibold text-white">New Arrival</p>
-                <p className="text-xs text-white/90">৳24.99</p>
+                <p className="text-xs text-white/90">৳2499</p>
             </motion.div>
+
             <motion.div
                 animate={{ y: [0, 14, 0] }}
                 transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
-                className="absolute bottom-4 right-4 sm:bottom-28 sm:right-40 w-28 sm:w-36 rounded-2xl bg-white/30 backdrop-blur-xl border border-white/40 p-2.5 sm:p-3 z-20 shadow-2xl"
+                className="hidden sm:block absolute bottom-4 right-4 sm:bottom-28 sm:right-40 w-28 sm:w-36 rounded-2xl bg-white/30 backdrop-blur-xl border border-white/40 p-2.5 sm:p-3 z-20 shadow-2xl"
             >
-                <div className="w-full h-12 sm:h-16 rounded-xl bg-gradient-to-br from-[#B75D3E]/70 to-[#E08B5E]/70 mb-2" />
+                <div className="relative w-full h-12 sm:h-16 rounded-xl overflow-hidden mb-2">
+                    <Image
+                        src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300&h=300&fit=crop"
+                        alt="Best Seller"
+                        fill
+                        className="object-cover"
+                    />
+                </div>
                 <p className="text-xs font-semibold text-white">Best Seller</p>
                 <p className="text-xs text-white/90">4.9 ★ rating</p>
             </motion.div>
