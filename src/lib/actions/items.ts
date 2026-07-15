@@ -41,3 +41,8 @@ export async function createItem(payload: CreateItemPayload): Promise<Item> {
     const { data } = await api.post('/items', payload);
     return data.item;
 }
+
+export async function getMyItems(): Promise<Item[]> {
+    const { data } = await api.get('/items/mine');
+    return data.items;
+}

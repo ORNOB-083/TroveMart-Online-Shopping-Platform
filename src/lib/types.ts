@@ -31,3 +31,14 @@ export interface Review {
     comment: string;
     createdAt: string;
 }
+
+export interface AdminUser {
+    _id: string;
+    name: string;
+    email: string;
+    role: 'user' | 'seller' | 'admin';
+    image?: string;
+    provider: string;
+    banned: boolean;
+    createdAt: string;
+}
