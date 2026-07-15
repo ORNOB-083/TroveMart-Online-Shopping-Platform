@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, Send } from 'lucide-react';
 import { FaFacebook, FaInstagram, FaTwitter } from 'react-icons/fa';
 import toast from 'react-hot-toast';
+import BecomeSellerSection from '@/components/BecomeSellerSection';
 
 const containerVariants = {
     hidden: { opacity: 0 },
@@ -247,6 +248,8 @@ export default function ContactPage() {
                     </motion.div>
                 </motion.div>
             </section>
+
+            <BecomeSellerSection />
 
             <section className="py-12 px-4 sm:px-6 lg:px-8">
                 <motion.div
