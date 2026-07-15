@@ -1,17 +1,23 @@
-import BecomeSellerSection from "@/components/BecomeSellerSection";
-import CategorySection from "@/components/CategorySection";
-import HeroSection from "@/components/HeroSection";
-import TestimonialsSection from "@/components/TestimonialsSection";
-import Image from "next/image";
+import HeroSection from '@/components/HeroSection';
+import CategorySection from '@/components/CategorySection';
+import FlashSaleSection from '@/components/FlashSaleSection';
+import TestimonialsSection from '@/components/TestimonialsSection';
+import BecomeSellerSection from '@/components/BecomeSellerSection';
+import { getItems } from '@/lib/actions/items';
 
-export default function Home() {
+export default async function Home() {
+  const { items } = await getItems({
+    limit: 8,
+    sort: 'newest',
+  });
+
   return (
-    <div className="">
+    <main>
       <HeroSection />
+      <FlashSaleSection items={items} />
       <CategorySection />
-
-      <BecomeSellerSection />
       <TestimonialsSection />
-    </div>
+      <BecomeSellerSection />
+    </main>
   );
 }
