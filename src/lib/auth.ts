@@ -127,3 +127,13 @@ export async function loginWithFacebookCode(code: string, redirectUri: string) {
 export function logout() {
   removeToken();
 }
+
+export async function refreshSession(): Promise<AuthUser | null> {
+  try {
+    const { data } = await api.get('/auth/refresh');
+    setToken(data.token);
+    return data.user;
+  } catch {
+    return null;
+  }
+}

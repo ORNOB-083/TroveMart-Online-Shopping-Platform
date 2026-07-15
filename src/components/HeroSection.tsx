@@ -90,7 +90,7 @@ export default function HeroSection() {
                         initial={{ y: '100%' }}
                         animate={{ y: 0 }}
                         transition={{ duration: 0.6, delay: 0.22, ease: [0.22, 1, 0.36, 1] }}
-                        className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight max-w-2xl mb-4"
+                        className="text-4xl sm:text-5xl lg:text-6xl text-white font-bold leading-tight max-w-2xl mb-4"
                     >
                         <span className="bg-gradient-to-r from-[#E08B5E] to-[#F0B27E] bg-clip-text text-transparent">
                             Best Deals

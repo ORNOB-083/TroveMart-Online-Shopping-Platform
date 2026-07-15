@@ -52,3 +52,15 @@ export interface MyReview extends Review {
         price: number;
     } | null;
 }
+
+export interface SellerApplication {
+    _id: string;
+    userId: string;
+    userName: string;
+    userEmail: string;
+    businessName: string;
+    businessDescription: string;
+    phone: string;
+    status: 'pending' | 'approved' | 'rejected';
+    createdAt: string;
+}
