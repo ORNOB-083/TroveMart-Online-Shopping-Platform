@@ -10,6 +10,7 @@ export default function SellerDashboardPage() {
     const [user, setUser] = useState<AuthUser | null>(null);
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setUser(getCurrentUser());
     }, []);
 
@@ -78,7 +79,7 @@ export default function SellerDashboardPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Link
-                        href="/items/add"
+                        href="/dashboard/seller/add"
                         className="rounded-2xl border border-[#E4D9C7] dark:border-gray-700 p-4 hover:bg-[#F5EFE6] dark:hover:bg-gray-800 transition-all"
                     >
                         <div className="flex items-center justify-between">
@@ -91,7 +92,7 @@ export default function SellerDashboardPage() {
                     </Link>
 
                     <Link
-                        href="/items/manage"
+                        href="/dashboard/seller/items"
                         className="rounded-2xl border border-[#E4D9C7] dark:border-gray-700 p-4 hover:bg-[#F5EFE6] dark:hover:bg-gray-800 transition-all"
                     >
                         <div className="flex items-center justify-between">

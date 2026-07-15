@@ -28,7 +28,7 @@ export default function Footer() {
     const year = new Date().getFullYear();
 
     return (
-        <footer className="relative mt-16 bg-[#F5EFE6] dark:bg-[#0f1117] transition-colors duration-300 overflow-hidden">
+        <footer className="relative bg-[#F5EFE6] dark:bg-[#0f1117] transition-colors duration-300 overflow-hidden">
             <div className="h-1 w-full bg-gradient-to-r from-transparent via-[#B75D3E] to-transparent opacity-60 dark:opacity-80" />
 
             <div className="border-b border-[#E4D9C7] dark:border-gray-800">

@@ -48,8 +48,8 @@ const NAV_LINKS: Record<Role, NavItem[]> = {
     seller: [
         { label: 'Overview', href: '/dashboard/seller', icon: LayoutDashboard },
         { label: 'My Profile', href: '/dashboard/seller/profile', icon: User },
-        { label: 'Add Item', href: '/items/add', icon: PlusCircle },
-        { label: 'My Items', href: '/items/manage', icon: LayoutGrid },
+        { label: 'Add Item', href: '/dashboard/seller/add', icon: PlusCircle },
+        { label: 'My Items', href: '/dashboard/seller/items', icon: LayoutGrid },
     ],
     admin: [
         { label: 'Overview', href: '/dashboard/admin', icon: LayoutDashboard },

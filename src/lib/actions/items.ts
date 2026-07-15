@@ -26,3 +26,18 @@ export async function getCategories(): Promise<string[]> {
     const { data } = await api.get('/items/categories');
     return data.categories;
 }
+
+export interface CreateItemPayload {
+    title: string;
+    description: string;
+    price: number;
+    category: string;
+    images: string[];
+    quantity: number;
+    specs: Record<string, string>;
+}
+
+export async function createItem(payload: CreateItemPayload): Promise<Item> {
+    const { data } = await api.post('/items', payload);
+    return data.item;
+}

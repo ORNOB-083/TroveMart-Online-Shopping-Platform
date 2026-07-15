@@ -176,7 +176,7 @@ export default function Navbar() {
                                 );
                             })}
 
-                            {isSeller && (
+                            {/* {isSeller && (
                                 <>
                                     <Link
                                         href="/items/add"
@@ -215,7 +215,7 @@ export default function Navbar() {
                                         />
                                     </Link>
                                 </>
-                            )}
+                            )} */}
                         </div>
 
                         <div className="hidden md:flex items-center gap-3">
