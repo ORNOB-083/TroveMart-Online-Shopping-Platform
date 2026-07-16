@@ -9,25 +9,11 @@ export async function getAdminItems(status: string = 'pending'): Promise<Item[]>
 
 export async function approveItem(id: string): Promise<Item> {
     const { data } = await api.patch(`/admin/items/${id}/approve`);
-    
-    // Dispatch events to update dashboards
-    if (typeof window !== 'undefined') {
-        window.dispatchEvent(new Event('trovemart:admin-change'));
-        window.dispatchEvent(new Event('trovemart:item-change'));
-    }
-    
     return data.item;
 }
 
 export async function rejectItem(id: string): Promise<Item> {
     const { data } = await api.patch(`/admin/items/${id}/reject`);
-    
-    // Dispatch events to update dashboards
-    if (typeof window !== 'undefined') {
-        window.dispatchEvent(new Event('trovemart:admin-change'));
-        window.dispatchEvent(new Event('trovemart:item-change'));
-    }
-    
     return data.item;
 }
 
@@ -38,23 +24,11 @@ export async function getAllUsers(role: string = 'all'): Promise<AdminUser[]> {
 
 export async function banUser(id: string): Promise<AdminUser> {
     const { data } = await api.patch(`/admin/users/${id}/ban`);
-    
-    // Dispatch event to update admin dashboard
-    if (typeof window !== 'undefined') {
-        window.dispatchEvent(new Event('trovemart:admin-change'));
-    }
-    
     return data.user;
 }
 
 export async function unbanUser(id: string): Promise<AdminUser> {
     const { data } = await api.patch(`/admin/users/${id}/unban`);
-    
-    // Dispatch event to update admin dashboard
-    if (typeof window !== 'undefined') {
-        window.dispatchEvent(new Event('trovemart:admin-change'));
-    }
-    
     return data.user;
 }
 

@@ -37,26 +37,10 @@ export default function MyItemsClient() {
 
     useEffect(() => {
         if (!authorized) return;
-        
-        const loadItems = () => {
-            getMyItems()
-                .then(setItems)
-                .catch(() => toast.error('Failed to load your items.'))
-                .finally(() => setLoading(false));
-        };
-
-        loadItems();
-
-        // Listen for item changes
-        const handleItemChange = () => {
-            loadItems();
-        };
-
-        window.addEventListener('trovemart:item-change', handleItemChange);
-
-        return () => {
-            window.removeEventListener('trovemart:item-change', handleItemChange);
-        };
+        getMyItems()
+            .then(setItems)
+            .catch(() => toast.error('Failed to load your items.'))
+            .finally(() => setLoading(false));
     }, [authorized]);
 
     if (authorized === null || loading) {

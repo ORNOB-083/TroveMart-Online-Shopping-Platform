@@ -24,19 +24,8 @@ export async function getAllApplications(status: string = 'pending'): Promise<Se
 
 export async function approveApplication(id: string): Promise<void> {
     await api.patch(`/seller-applications/${id}/approve`);
-    
-    // Dispatch event to update dashboards
-    if (typeof window !== 'undefined') {
-        window.dispatchEvent(new Event('trovemart:admin-change'));
-        window.dispatchEvent(new Event('trovemart:seller-change'));
-    }
 }
 
 export async function rejectApplication(id: string): Promise<void> {
     await api.patch(`/seller-applications/${id}/reject`);
-    
-    // Dispatch event to update dashboards
-    if (typeof window !== 'undefined') {
-        window.dispatchEvent(new Event('trovemart:admin-change'));
-    }
 }

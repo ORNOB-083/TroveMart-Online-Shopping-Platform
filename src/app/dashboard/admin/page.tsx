@@ -42,21 +42,6 @@ export default function AdminDashboardPage() {
         };
 
         loadStats();
-
-        // Listen for admin-related changes
-        const handleAdminChange = () => {
-            loadStats();
-        };
-
-        window.addEventListener('trovemart:admin-change', handleAdminChange);
-        window.addEventListener('trovemart:item-change', handleAdminChange);
-        window.addEventListener('trovemart:seller-change', handleAdminChange);
-
-        return () => {
-            window.removeEventListener('trovemart:admin-change', handleAdminChange);
-            window.removeEventListener('trovemart:item-change', handleAdminChange);
-            window.removeEventListener('trovemart:seller-change', handleAdminChange);
-        };
     }, []);
 
     const quickActions = [
