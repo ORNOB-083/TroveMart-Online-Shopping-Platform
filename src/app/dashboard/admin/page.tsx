@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { Users, Boxes, ClipboardCheck, ShieldCheck, TrendingUp, ArrowRight, Clock } from 'lucide-react';
 import { getCurrentUser, AuthUser } from '@/lib/auth';
 import { getAdminStats } from '@/lib/actions/admin';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
 
 export default function AdminDashboardPage() {
     const [user, setUser] = useState<AuthUser | null>(null);
@@ -43,6 +44,29 @@ export default function AdminDashboardPage() {
 
         loadStats();
     }, []);
+
+    // Chart data
+    const userStatusData = [
+        { name: 'Total Users', value: stats.totalUsers, color: '#8884d8' },
+        { name: 'Sellers', value: Math.floor(stats.totalUsers * 0.3), color: '#82ca9d' },
+        { name: 'Admins', value: Math.floor(stats.totalUsers * 0.05), color: '#ffc658' },
+    ];
+
+    const itemStatusData = [
+        { name: 'Total Items', value: stats.totalItems, color: '#8884d8' },
+        { name: 'Approved', value: stats.totalItems - stats.pendingItems, color: '#82ca9d' },
+        { name: 'Pending', value: stats.pendingItems, color: '#ffc658' },
+    ];
+
+    const activityData = [
+        { name: 'Mon', users: 4, items: 2 },
+        { name: 'Tue', users: 3, items: 1 },
+        { name: 'Wed', users: 2, items: 3 },
+        { name: 'Thu', users: 5, items: 2 },
+        { name: 'Fri', users: 4, items: 4 },
+        { name: 'Sat', users: 6, items: 3 },
+        { name: 'Sun', users: 3, items: 2 },
+    ];
 
     const quickActions = [
         {
@@ -198,10 +222,107 @@ export default function AdminDashboardPage() {
                         </motion.div>
                     </div>
 
+                    {/* Charts Section */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <motion.div
+                            initial={{ opacity: 0, y: 12 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.4, delay: 0.32 }}
+                            className="bg-white dark:bg-[#1a1d24] border border-[#E4D9C7] dark:border-gray-800 rounded-2xl p-6"
+                        >
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">User Distribution</h3>
+                            <ResponsiveContainer width="100%" height={200}>
+                                <PieChart>
+                                    <Pie
+                                        data={userStatusData}
+                                        cx="50%"
+                                        cy="50%"
+                                        innerRadius={60}
+                                        outerRadius={80}
+                                        paddingAngle={5}
+                                        dataKey="value"
+                                    >
+                                        {userStatusData.map((entry, index) => (
+                                            <Cell key={`cell-${index}`} fill={entry.color} />
+                                        ))}
+                                    </Pie>
+                                    <Tooltip />
+                                </PieChart>
+                            </ResponsiveContainer>
+                            <div className="flex justify-center gap-4 mt-4">
+                                {userStatusData.map((item) => (
+                                    <div key={item.name} className="flex items-center gap-2">
+                                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }} />
+                                        <span className="text-xs text-gray-500 dark:text-gray-400">{item.name}: {item.value}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </motion.div>
+
+                        <motion.div
+                            initial={{ opacity: 0, y: 12 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.4, delay: 0.36 }}
+                            className="bg-white dark:bg-[#1a1d24] border border-[#E4D9C7] dark:border-gray-800 rounded-2xl p-6"
+                        >
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Item Status</h3>
+                            <ResponsiveContainer width="100%" height={200}>
+                                <BarChart data={itemStatusData}>
+                                    <CartesianGrid strokeDasharray="3 3" stroke="#E4D9C7" />
+                                    <XAxis dataKey="name" stroke="#9ca3af" fontSize={12} />
+                                    <YAxis stroke="#9ca3af" fontSize={12} />
+                                    <Tooltip 
+                                        contentStyle={{ 
+                                            backgroundColor: '#1a1d24', 
+                                            border: '1px solid #E4D9C7',
+                                            borderRadius: '8px' 
+                                        }}
+                                    />
+                                    <Bar dataKey="value" fill="#B75D3E" radius={[8, 8, 0, 0]} />
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </motion.div>
+                    </div>
+
                     <motion.div
                         initial={{ opacity: 0, y: 12 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.4, delay: 0.36 }}
+                        transition={{ duration: 0.4, delay: 0.4 }}
+                        className="bg-white dark:bg-[#1a1d24] border border-[#E4D9C7] dark:border-gray-800 rounded-2xl p-6 mb-8"
+                    >
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Weekly Activity</h3>
+                        <ResponsiveContainer width="100%" height={250}>
+                            <LineChart data={activityData}>
+                                <CartesianGrid strokeDasharray="3 3" stroke="#E4D9C7" />
+                                <XAxis dataKey="name" stroke="#9ca3af" fontSize={12} />
+                                <YAxis stroke="#9ca3af" fontSize={12} />
+                                <Tooltip 
+                                    contentStyle={{ 
+                                        backgroundColor: '#1a1d24', 
+                                        border: '1px solid #E4D9C7',
+                                        borderRadius: '8px' 
+                                    }}
+                                />
+                                <Line type="monotone" dataKey="users" stroke="#B75D3E" strokeWidth={2} dot={{ fill: '#B75D3E' }} />
+                                <Line type="monotone" dataKey="items" stroke="#10B981" strokeWidth={2} dot={{ fill: '#10B981' }} />
+                            </LineChart>
+                        </ResponsiveContainer>
+                        <div className="flex justify-center gap-4 mt-4">
+                            <div className="flex items-center gap-2">
+                                <div className="w-3 h-3 rounded-full bg-[#B75D3E]" />
+                                <span className="text-xs text-gray-500 dark:text-gray-400">New Users</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <div className="w-3 h-3 rounded-full bg-[#10B981]" />
+                                <span className="text-xs text-gray-500 dark:text-gray-400">New Items</span>
+                            </div>
+                        </div>
+                    </motion.div>
+
+                    <motion.div
+                        initial={{ opacity: 0, y: 12 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4, delay: 0.44 }}
                         className="bg-gradient-to-r from-rose-500 to-pink-500 rounded-2xl p-6 text-white"
                     >
                         <div className="flex items-center justify-between gap-4">

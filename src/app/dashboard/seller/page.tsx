@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { Package, PlusCircle, LayoutGrid, TrendingUp, ArrowRight, Store, User, Clock } from 'lucide-react';
 import { getCurrentUser, AuthUser } from '@/lib/auth';
 import { api } from '@/lib/api';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, AreaChart, Area } from 'recharts';
 
 export default function SellerDashboardPage() {
     const [user, setUser] = useState<AuthUser | null>(null);
@@ -48,6 +49,31 @@ export default function SellerDashboardPage() {
 
         loadStats();
     }, []);
+
+    // Chart data
+    const itemStatusData = [
+        { name: 'Active', value: activeListings, color: '#10B981' },
+        { name: 'Pending', value: pendingItems, color: '#F59E0B' },
+        { name: 'Total', value: totalItems, color: '#B75D3E' },
+    ];
+
+    const salesData = [
+        { name: 'Mon', sales: 120, views: 200 },
+        { name: 'Tue', sales: 98, views: 180 },
+        { name: 'Wed', sales: 156, views: 250 },
+        { name: 'Thu', sales: 134, views: 220 },
+        { name: 'Fri', sales: 189, views: 300 },
+        { name: 'Sat', sales: 245, views: 350 },
+        { name: 'Sun', sales: 167, views: 280 },
+    ];
+
+    const categoryData = [
+        { name: 'Electronics', value: 30, color: '#8884d8' },
+        { name: 'Fashion', value: 25, color: '#82ca9d' },
+        { name: 'Home', value: 20, color: '#ffc658' },
+        { name: 'Books', value: 15, color: '#ff7300' },
+        { name: 'Other', value: 10, color: '#00c49f' },
+    ];
 
     const quickActions = [
         {
@@ -117,122 +143,219 @@ export default function SellerDashboardPage() {
                     </motion.div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                    {quickActions.map((action, i) => (
+                        {quickActions.map((action, i) => (
+                            <motion.div
+                                key={action.label}
+                                initial={{ opacity: 0, y: 12 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.4, delay: i * 0.06 }}
+                            >
+                                <Link
+                                    href={action.href}
+                                    className="block bg-white dark:bg-[#1a1d24] border border-[#E4D9C7] dark:border-gray-800 rounded-2xl p-5 hover:shadow-lg hover:shadow-emerald-500/10 transition-all duration-300 group"
+                                >
+                                    <div className="flex items-center justify-between mb-3">
+                                        <span className="text-sm text-gray-500 dark:text-gray-400">{action.label}</span>
+                                        <div className="relative">
+                                            <div className={`w-8 h-8 rounded-full bg-gradient-to-r ${action.color} bg-opacity-10 dark:bg-opacity-20 flex items-center justify-center`}>
+                                                <action.icon className={`w-4 h-4 text-transparent bg-clip-text bg-gradient-to-r ${action.color}`} />
+                                            </div>
+                                            {action.count !== null && action.count > 0 && (
+                                                <span className="absolute -top-1 -right-1 w-5 h-5 flex items-center justify-center text-xs font-bold text-white bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full">
+                                                    {action.count > 9 ? '9+' : action.count}
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <p className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">{action.description}</p>
+                                    <div className="flex items-center text-xs text-emerald-500 dark:text-emerald-400 font-medium">
+                                        View
+                                        <ArrowRight className="w-3 h-3 ml-1 group-hover:translate-x-1 transition-transform" />
+                                    </div>
+                                </Link>
+                            </motion.div>
+                        ))}
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                         <motion.div
-                            key={action.label}
                             initial={{ opacity: 0, y: 12 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.4, delay: i * 0.06 }}
+                            transition={{ duration: 0.4, delay: 0.2 }}
+                            className="bg-white dark:bg-[#1a1d24] border border-[#E4D9C7] dark:border-gray-800 rounded-2xl p-6"
                         >
-                            <Link
-                                href={action.href}
-                                className="block bg-white dark:bg-[#1a1d24] border border-[#E4D9C7] dark:border-gray-800 rounded-2xl p-5 hover:shadow-lg hover:shadow-emerald-500/10 transition-all duration-300 group"
-                            >
-                                <div className="flex items-center justify-between mb-3">
-                                    <span className="text-sm text-gray-500 dark:text-gray-400">{action.label}</span>
-                                    <div className="relative">
-                                        <div className={`w-8 h-8 rounded-full bg-gradient-to-r ${action.color} bg-opacity-10 dark:bg-opacity-20 flex items-center justify-center`}>
-                                            <action.icon className={`w-4 h-4 text-transparent bg-clip-text bg-gradient-to-r ${action.color}`} />
-                                        </div>
-                                        {action.count !== null && action.count > 0 && (
-                                            <span className="absolute -top-1 -right-1 w-5 h-5 flex items-center justify-center text-xs font-bold text-white bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full">
-                                                {action.count > 9 ? '9+' : action.count}
-                                            </span>
-                                        )}
+                            <div className="flex items-center gap-4 mb-4">
+                                <div className="w-12 h-12 rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center">
+                                    <Store className="w-6 h-6 text-emerald-500" />
+                                </div>
+                                <div>
+                                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Store Performance</h3>
+                                    <p className="text-sm text-gray-500 dark:text-gray-400">Track your sales and growth</p>
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="bg-[#F5EFE6] dark:bg-gray-800 rounded-xl p-3">
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <Package className="w-4 h-4 text-emerald-500" />
+                                        <span className="text-xs text-gray-500 dark:text-gray-400">Active Listings</span>
                                     </div>
+                                    <p className="text-xl font-bold text-gray-900 dark:text-gray-100">{activeListings}</p>
                                 </div>
-                                <p className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">{action.description}</p>
-                                <div className="flex items-center text-xs text-emerald-500 dark:text-emerald-400 font-medium">
-                                    View
-                                    <ArrowRight className="w-3 h-3 ml-1 group-hover:translate-x-1 transition-transform" />
+                                <div className="bg-[#F5EFE6] dark:bg-gray-800 rounded-xl p-3">
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <Clock className="w-4 h-4 text-amber-500" />
+                                        <span className="text-xs text-gray-500 dark:text-gray-400">Pending Review</span>
+                                    </div>
+                                    <p className="text-xl font-bold text-gray-900 dark:text-gray-100">{pendingItems}</p>
                                 </div>
+                            </div>
+                        </motion.div>
+
+                        <motion.div
+                            initial={{ opacity: 0, y: 12 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.4, delay: 0.28 }}
+                            className="bg-white dark:bg-[#1a1d24] border border-[#E4D9C7] dark:border-gray-800 rounded-2xl p-6"
+                        >
+                            <div className="flex items-center gap-4 mb-4">
+                                <div className="w-12 h-12 rounded-xl bg-blue-500/10 dark:bg-blue-500/20 flex items-center justify-center">
+                                    <User className="w-6 h-6 text-blue-500" />
+                                </div>
+                                <div>
+                                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Profile Settings</h3>
+                                    <p className="text-sm text-gray-500 dark:text-gray-400">Manage your seller account</p>
+                                </div>
+                            </div>
+                            <Link
+                                href="/dashboard/seller/profile"
+                                className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-blue-500 border border-blue-500/30 rounded-xl hover:bg-blue-500/5 transition-all"
+                            >
+                                Manage Profile
+                                <ArrowRight className="w-4 h-4" />
                             </Link>
                         </motion.div>
-                    ))}
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                    <motion.div
-                        initial={{ opacity: 0, y: 12 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.4, delay: 0.2 }}
-                        className="bg-white dark:bg-[#1a1d24] border border-[#E4D9C7] dark:border-gray-800 rounded-2xl p-6"
-                    >
-                        <div className="flex items-center gap-4 mb-4">
-                            <div className="w-12 h-12 rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center">
-                                <Store className="w-6 h-6 text-emerald-500" />
-                            </div>
-                            <div>
-                                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Store Performance</h3>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">Track your sales and growth</p>
-                            </div>
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="bg-[#F5EFE6] dark:bg-gray-800 rounded-xl p-3">
-                                <div className="flex items-center gap-2 mb-1">
-                                    <Package className="w-4 h-4 text-emerald-500" />
-                                    <span className="text-xs text-gray-500 dark:text-gray-400">Active Listings</span>
-                                </div>
-                                <p className="text-xl font-bold text-gray-900 dark:text-gray-100">{activeListings}</p>
-                            </div>
-                            <div className="bg-[#F5EFE6] dark:bg-gray-800 rounded-xl p-3">
-                                <div className="flex items-center gap-2 mb-1">
-                                    <Clock className="w-4 h-4 text-amber-500" />
-                                    <span className="text-xs text-gray-500 dark:text-gray-400">Pending Review</span>
-                                </div>
-                                <p className="text-xl font-bold text-gray-900 dark:text-gray-100">{pendingItems}</p>
-                            </div>
-                        </div>
-                    </motion.div>
-
-                    <motion.div
-                        initial={{ opacity: 0, y: 12 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.4, delay: 0.28 }}
-                        className="bg-white dark:bg-[#1a1d24] border border-[#E4D9C7] dark:border-gray-800 rounded-2xl p-6"
-                    >
-                        <div className="flex items-center gap-4 mb-4">
-                            <div className="w-12 h-12 rounded-xl bg-blue-500/10 dark:bg-blue-500/20 flex items-center justify-center">
-                                <User className="w-6 h-6 text-blue-500" />
-                            </div>
-                            <div>
-                                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Profile Settings</h3>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">Manage your seller account</p>
-                            </div>
-                        </div>
-                        <Link
-                            href="/dashboard/seller/profile"
-                            className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-blue-500 border border-blue-500/30 rounded-xl hover:bg-blue-500/5 transition-all"
-                        >
-                            Manage Profile
-                            <ArrowRight className="w-4 h-4" />
-                        </Link>
-                    </motion.div>
-                </div>
-
-                <motion.div
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4, delay: 0.36 }}
-                    className="bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl p-6 text-white"
-                >
-                    <div className="flex items-center justify-between gap-4">
-                        <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
-                                <TrendingUp className="w-6 h-6" />
-                            </div>
-                            <div>
-                                <h3 className="text-lg font-semibold mb-1">Sales analytics coming soon</h3>
-                                <p className="text-sm text-white/80">Track your revenue, orders, and customer insights</p>
-                            </div>
-                        </div>
-                        <div className="shrink-0">
-                            <span className="inline-flex items-center px-3 py-1 rounded-full bg-white/20 text-sm font-medium">
-                                Coming Soon
-                            </span>
-                        </div>
                     </div>
-                </motion.div>
+
+                    {/* Charts Section */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <motion.div
+                            initial={{ opacity: 0, y: 12 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.4, delay: 0.32 }}
+                            className="bg-white dark:bg-[#1a1d24] border border-[#E4D9C7] dark:border-gray-800 rounded-2xl p-6"
+                        >
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Item Status Distribution</h3>
+                            <ResponsiveContainer width="100%" height={200}>
+                                <PieChart>
+                                    <Pie
+                                        data={itemStatusData}
+                                        cx="50%"
+                                        cy="50%"
+                                        innerRadius={60}
+                                        outerRadius={80}
+                                        paddingAngle={5}
+                                        dataKey="value"
+                                    >
+                                        {itemStatusData.map((entry, index) => (
+                                            <Cell key={`cell-${index}`} fill={entry.color} />
+                                        ))}
+                                    </Pie>
+                                    <Tooltip />
+                                </PieChart>
+                            </ResponsiveContainer>
+                            <div className="flex justify-center gap-4 mt-4">
+                                {itemStatusData.map((item) => (
+                                    <div key={item.name} className="flex items-center gap-2">
+                                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }} />
+                                        <span className="text-xs text-gray-500 dark:text-gray-400">{item.name}: {item.value}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </motion.div>
+
+                        <motion.div
+                            initial={{ opacity: 0, y: 12 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.4, delay: 0.36 }}
+                            className="bg-white dark:bg-[#1a1d24] border border-[#E4D9C7] dark:border-gray-800 rounded-2xl p-6"
+                        >
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Weekly Sales Performance</h3>
+                            <ResponsiveContainer width="100%" height={200}>
+                                <AreaChart data={salesData}>
+                                    <CartesianGrid strokeDasharray="3 3" stroke="#E4D9C7" />
+                                    <XAxis dataKey="name" stroke="#9ca3af" fontSize={12} />
+                                    <YAxis stroke="#9ca3af" fontSize={12} />
+                                    <Tooltip 
+                                        contentStyle={{ 
+                                            backgroundColor: '#1a1d24', 
+                                            border: '1px solid #E4D9C7',
+                                            borderRadius: '8px' 
+                                        }}
+                                    />
+                                    <Area type="monotone" dataKey="sales" stackId="1" stroke="#10B981" fill="#10B981" fillOpacity={0.6} />
+                                    <Area type="monotone" dataKey="views" stackId="1" stroke="#B75D3E" fill="#B75D3E" fillOpacity={0.6} />
+                                </AreaChart>
+                            </ResponsiveContainer>
+                            <div className="flex justify-center gap-4 mt-4">
+                                <div className="flex items-center gap-2">
+                                    <div className="w-3 h-3 rounded-full bg-[#10B981]" />
+                                    <span className="text-xs text-gray-500 dark:text-gray-400">Sales</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <div className="w-3 h-3 rounded-full bg-[#B75D3E]" />
+                                    <span className="text-xs text-gray-500 dark:text-gray-400">Views</span>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </div>
+
+                    <motion.div
+                        initial={{ opacity: 0, y: 12 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4, delay: 0.4 }}
+                        className="bg-white dark:bg-[#1a1d24] border border-[#E4D9C7] dark:border-gray-800 rounded-2xl p-6 mb-8"
+                    >
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Category Performance</h3>
+                        <ResponsiveContainer width="100%" height={250}>
+                            <BarChart data={categoryData}>
+                                <CartesianGrid strokeDasharray="3 3" stroke="#E4D9C7" />
+                                <XAxis dataKey="name" stroke="#9ca3af" fontSize={12} />
+                                <YAxis stroke="#9ca3af" fontSize={12} />
+                                <Tooltip 
+                                    contentStyle={{ 
+                                        backgroundColor: '#1a1d24', 
+                                        border: '1px solid #E4D9C7',
+                                        borderRadius: '8px' 
+                                    }}
+                                />
+                                <Bar dataKey="value" fill="#10B981" radius={[8, 8, 0, 0]} />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </motion.div>
+
+                    <motion.div
+                        initial={{ opacity: 0, y: 12 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4, delay: 0.44 }}
+                        className="bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl p-6 text-white"
+                    >
+                        <div className="flex items-center justify-between gap-4">
+                            <div className="flex items-center gap-4">
+                                <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
+                                    <TrendingUp className="w-6 h-6" />
+                                </div>
+                                <div>
+                                    <h3 className="text-lg font-semibold mb-1">Sales analytics coming soon</h3>
+                                    <p className="text-sm text-white/80">Track your revenue, orders, and customer insights</p>
+                                </div>
+                            </div>
+                            <div className="shrink-0">
+                                <span className="inline-flex items-center px-3 py-1 rounded-full bg-white/20 text-sm font-medium">
+                                    Coming Soon
+                                </span>
+                            </div>
+                        </div>
+                    </motion.div>
                 </>
             )}
         </div>
