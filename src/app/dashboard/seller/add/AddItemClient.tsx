@@ -82,7 +82,13 @@ export default function AddItemClient() {
                 specs: specsObject,
             });
             toast.success('Item submitted for admin approval!');
-            router.push('/items');
+            
+            // Dispatch event to update seller dashboard stats
+            if (typeof window !== 'undefined') {
+                window.dispatchEvent(new Event('trovemart:item-change'));
+            }
+            
+            router.push('/dashboard/seller/items');
         } catch (err: any) {
             toast.error(err?.response?.data?.message || 'Failed to add item.');
         } finally {

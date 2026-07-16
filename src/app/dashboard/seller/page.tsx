@@ -47,6 +47,17 @@ export default function SellerDashboardPage() {
         };
 
         loadStats();
+
+        // Listen for item changes (when seller adds/updates items)
+        const handleItemChange = () => {
+            loadStats();
+        };
+
+        window.addEventListener('trovemart:item-change', handleItemChange);
+
+        return () => {
+            window.removeEventListener('trovemart:item-change', handleItemChange);
+        };
     }, []);
 
     const quickActions = [
