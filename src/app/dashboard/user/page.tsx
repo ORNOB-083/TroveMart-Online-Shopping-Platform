@@ -3,10 +3,11 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ShoppingCart, Heart, Star, ArrowRight, User, ShoppingBag, Package } from 'lucide-react';
+import { ShoppingCart, Heart, Star, ArrowRight, User, ShoppingBag, Package, TrendingUp } from 'lucide-react';
 import { getCurrentUser, AuthUser } from '@/lib/auth';
 import { getCartCount } from '@/lib/cart';
 import { getWishlistItemIds } from '@/lib/utils';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, AreaChart, Area } from 'recharts';
 
 export default function UserDashboardPage() {
     const [user, setUser] = useState<AuthUser | null>(null);
@@ -55,6 +56,41 @@ export default function UserDashboardPage() {
             window.removeEventListener('trovemart:wishlist-change', handleWishlistChange);
         };
     }, []);
+
+    // Chart data
+    const activityData = [
+        { name: 'Mon', views: 12, cart: 2, wishlist: 1 },
+        { name: 'Tue', views: 8, cart: 1, wishlist: 2 },
+        { name: 'Wed', views: 15, cart: 3, wishlist: 1 },
+        { name: 'Thu', views: 10, cart: 2, wishlist: 0 },
+        { name: 'Fri', views: 18, cart: 4, wishlist: 2 },
+        { name: 'Sat', views: 22, cart: 5, wishlist: 3 },
+        { name: 'Sun', views: 14, cart: 3, wishlist: 1 },
+    ];
+
+    const wishlistCategoryData = [
+        { name: 'Electronics', value: 35, color: '#8884d8' },
+        { name: 'Fashion', value: 28, color: '#82ca9d' },
+        { name: 'Home', value: 22, color: '#ffc658' },
+        { name: 'Books', value: 10, color: '#ff7300' },
+        { name: 'Other', value: 5, color: '#00c49f' },
+    ];
+
+    const priceRangeData = [
+        { name: '$0-$25', value: 8, color: '#10B981' },
+        { name: '$25-$50', value: 12, color: '#B75D3E' },
+        { name: '$50-$100', value: 6, color: '#F59E0B' },
+        { name: '$100+', value: 4, color: '#6366f1' },
+    ];
+
+    const spendingData = [
+        { name: 'Jan', spending: 120 },
+        { name: 'Feb', spending: 98 },
+        { name: 'Mar', spending: 156 },
+        { name: 'Apr', spending: 134 },
+        { name: 'May', spending: 189 },
+        { name: 'Jun', spending: 245 },
+    ];
 
     const quickActions = [
         {
@@ -184,16 +220,144 @@ export default function UserDashboardPage() {
                 </motion.div>
             </div>
 
+            {/* Charts Section */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <motion.div
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: 0.32 }}
+                    className="bg-white dark:bg-[#1a1d24] border border-[#E4D9C7] dark:border-gray-800 rounded-2xl p-6"
+                >
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Weekly Shopping Activity</h3>
+                    <ResponsiveContainer width="100%" height={200}>
+                        <AreaChart data={activityData}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#E4D9C7" />
+                            <XAxis dataKey="name" stroke="#9ca3af" fontSize={12} />
+                            <YAxis stroke="#9ca3af" fontSize={12} />
+                            <Tooltip 
+                                contentStyle={{ 
+                                    backgroundColor: '#1a1d24', 
+                                    border: '1px solid #E4D9C7',
+                                    borderRadius: '8px' 
+                                }}
+                            />
+                            <Area type="monotone" dataKey="views" stackId="1" stroke="#B75D3E" fill="#B75D3E" fillOpacity={0.6} />
+                            <Area type="monotone" dataKey="cart" stackId="1" stroke="#10B981" fill="#10B981" fillOpacity={0.6} />
+                            <Area type="monotone" dataKey="wishlist" stackId="1" stroke="#F59E0B" fill="#F59E0B" fillOpacity={0.6} />
+                        </AreaChart>
+                    </ResponsiveContainer>
+                    <div className="flex justify-center gap-4 mt-4">
+                        <div className="flex items-center gap-2">
+                            <div className="w-3 h-3 rounded-full bg-[#B75D3E]" />
+                            <span className="text-xs text-gray-500 dark:text-gray-400">Views</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <div className="w-3 h-3 rounded-full bg-[#10B981]" />
+                            <span className="text-xs text-gray-500 dark:text-gray-400">Added to Cart</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <div className="w-3 h-3 rounded-full bg-[#F59E0B]" />
+                            <span className="text-xs text-gray-500 dark:text-gray-400">Wishlist</span>
+                        </div>
+                    </div>
+                </motion.div>
+
+                <motion.div
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: 0.36 }}
+                    className="bg-white dark:bg-[#1a1d24] border border-[#E4D9C7] dark:border-gray-800 rounded-2xl p-6"
+                >
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Wishlist Categories</h3>
+                    <ResponsiveContainer width="100%" height={200}>
+                        <PieChart>
+                            <Pie
+                                data={wishlistCategoryData}
+                                cx="50%"
+                                cy="50%"
+                                innerRadius={60}
+                                outerRadius={80}
+                                paddingAngle={5}
+                                dataKey="value"
+                            >
+                                {wishlistCategoryData.map((entry, index) => (
+                                    <Cell key={`cell-${index}`} fill={entry.color} />
+                                ))}
+                            </Pie>
+                            <Tooltip />
+                        </PieChart>
+                    </ResponsiveContainer>
+                    <div className="flex justify-center gap-4 mt-4 flex-wrap">
+                        {wishlistCategoryData.map((item) => (
+                            <div key={item.name} className="flex items-center gap-2">
+                                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }} />
+                                <span className="text-xs text-gray-500 dark:text-gray-400">{item.name}: {item.value}%</span>
+                            </div>
+                        ))}
+                    </div>
+                </motion.div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <motion.div
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: 0.4 }}
+                    className="bg-white dark:bg-[#1a1d24] border border-[#E4D9C7] dark:border-gray-800 rounded-2xl p-6"
+                >
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Price Range Distribution</h3>
+                    <ResponsiveContainer width="100%" height={200}>
+                        <BarChart data={priceRangeData}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#E4D9C7" />
+                            <XAxis dataKey="name" stroke="#9ca3af" fontSize={12} />
+                            <YAxis stroke="#9ca3af" fontSize={12} />
+                            <Tooltip 
+                                contentStyle={{ 
+                                    backgroundColor: '#1a1d24', 
+                                    border: '1px solid #E4D9C7',
+                                    borderRadius: '8px' 
+                                }}
+                            />
+                            <Bar dataKey="value" fill="#B75D3E" radius={[8, 8, 0, 0]} />
+                        </BarChart>
+                    </ResponsiveContainer>
+                </motion.div>
+
+                <motion.div
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: 0.44 }}
+                    className="bg-white dark:bg-[#1a1d24] border border-[#E4D9C7] dark:border-gray-800 rounded-2xl p-6"
+                >
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Monthly Spending</h3>
+                    <ResponsiveContainer width="100%" height={200}>
+                        <LineChart data={spendingData}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#E4D9C7" />
+                            <XAxis dataKey="name" stroke="#9ca3af" fontSize={12} />
+                            <YAxis stroke="#9ca3af" fontSize={12} />
+                            <Tooltip 
+                                contentStyle={{ 
+                                    backgroundColor: '#1a1d24', 
+                                    border: '1px solid #E4D9C7',
+                                    borderRadius: '8px' 
+                                }}
+                            />
+                            <Line type="monotone" dataKey="spending" stroke="#B75D3E" strokeWidth={2} dot={{ fill: '#B75D3E' }} />
+                        </LineChart>
+                    </ResponsiveContainer>
+                </motion.div>
+            </div>
+
             <motion.div
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.36 }}
+                transition={{ duration: 0.4, delay: 0.48 }}
                 className="bg-gradient-to-r from-[#B75D3E] to-[#E08B5E] rounded-2xl p-6 text-white"
             >
                 <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-4">
                         <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
-                            <Package className="w-6 h-6" />
+                            <TrendingUp className="w-6 h-6" />
                         </div>
                         <div>
                             <h3 className="text-lg font-semibold mb-1">Order tracking coming soon</h3>
